@@ -153,7 +153,11 @@
           <dict-tag :options="dict.type.permit_leave_status" :value="scope.row.leaveStatus"/>
         </template>
       </el-table-column>
-      <el-table-column label="请假天数" align="center" :formatter="getDays"/>
+      <el-table-column label="请假天数" align="center">
+        <template slot-scope="scope">
+          {{scope.row.permitDays}}天
+        </template>
+      </el-table-column>
       <el-table-column label="请假时间" align="center" prop="permitTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.permitTime, '{y}-{m}-{d}') }}</span>
@@ -488,27 +492,6 @@ export default {
       this.download('permit/permit/export', {
         ...this.queryParams
       }, `permit_${new Date().getTime()}.xlsx`)
-    },
-
-    // 获取天数
-    getDays(row) {
-      // 判断非空
-      if (!row.startTime || !row.endTime) {
-        return 0;
-      }
-
-
-      // 将日期字符串转换为Date对象
-      const date1 = new Date(row.startTime);
-      const date2 = new Date(row.endTime);
-
-      // 计算时间差（毫秒）
-      const timeDifference = Math.abs(date2 - date1);
-
-      // 将时间差转换为天数(向上取整)
-      const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-
-      return daysDifference + '天';
     }
   }
 };

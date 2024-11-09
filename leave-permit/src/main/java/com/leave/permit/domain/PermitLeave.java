@@ -36,6 +36,10 @@ public class PermitLeave extends BaseEntity
     @Excel(name = "请假理由")
     private String reason;
 
+    /** 请假天数 */
+    @Excel(name = "请假天数")
+    private Long permitDays;
+
     /** 起始日期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "起始日期", width = 30, dateFormat = "yyyy-MM-dd")
@@ -105,6 +109,9 @@ public class PermitLeave extends BaseEntity
     {
         this.reason = reason;
     }
+
+    public Long getPermitDays(){ return permitDays; }
+    public void setPermitDays(Long permitDays){this.permitDays = permitDays; }
 
     public String getReason() 
     {
@@ -191,6 +198,7 @@ public class PermitLeave extends BaseEntity
             .append("leaveId", getLeaveId())
             .append("userId", getUserId())
             .append("permitType", getPermitType())
+            .append("permitDays", getPermitDays())
             .append("reason", getReason())
             .append("startTime", getStartTime())
             .append("endTime", getEndTime())

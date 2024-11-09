@@ -8,6 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="leaveId"    column="leave_id"    />
         <result property="userId"    column="user_id"    />
         <result property="permitType"    column="permit_type"    />
+        <result property="permitDays"    column="permit_days"    />
         <result property="reason"    column="reason"    />
         <result property="startTime"    column="start_time"    />
         <result property="endTime"    column="end_time"    />
@@ -45,7 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectPermitLeaveVo">
-        select p.leave_id, p.user_id, p.permit_type, p.reason, p.start_time, p.end_time, p.is_back, p.leave_status, p.permit_time, p.back_time, p.create_time,
+        select p.leave_id, p.user_id, p.permit_type, p.reason, p.start_time, p.end_time, p.is_back, p.leave_status, p.permit_time, p.back_time, p.create_time,p.permit_days,
         u.user_id, u.user_name, u.nick_name, u.sex
         from permit_leave p
             left join sys_user u on p.user_id = u.user_id
@@ -62,13 +63,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="leaveStatus != null  and leaveStatus != ''"> and leave_status = #{leaveStatus}</if>
             <if test="permitTime != null "> and permit_time = #{permitTime}</if>
             <if test="backTime != null "> and back_time = #{backTime}</if>
+            <if test="permitDays != null "> and permit_days = #{permitDays}</if>
         </where>
         ORDER BY
         p.create_time DESC
     </select>
     
     <select id="selectPermitLeaveByLeaveId" parameterType="Long" resultMap="PermitLeavePermitLocationResult">
-        select leave_id, user_id, permit_type, reason, start_time, end_time, is_back, leave_status, permit_time, back_time, create_time
+        select leave_id, user_id, permit_type, reason, start_time, end_time, is_back, leave_status, permit_time, back_time, create_time, permit_days
         from permit_leave
         where leave_id = #{leaveId}
         order by
@@ -76,7 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectPermitLeaveListByUserId" parameterType="Long" resultMap="PermitLeavePermitLocationResult">
-        select leave_id, user_id, permit_type, reason, start_time, end_time, is_back, leave_status, permit_time, back_time, create_time
+        select leave_id, user_id, permit_type, reason, start_time, end_time, is_back, leave_status, permit_time, back_time, create_time, permit_days
         from permit_leave
         where user_id = #{userId}
         order by
@@ -84,7 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectPermitLeaveListByIsBack" parameterType="PermitLeaveBack" resultMap="PermitLeavePermitLocationResult">
-        select p.leave_id, p.user_id, p.permit_type, p.reason, p.start_time, p.end_time, p.is_back, p.leave_status, p.permit_time, p.back_time, p.create_time
+        select p.leave_id, p.user_id, p.permit_type, p.reason, p.start_time, p.end_time, p.is_back, p.leave_status, p.permit_time, p.back_time, p.create_time, p.permit_days
         from permit_leave p
         where
             p.is_back = #{isBack}
@@ -107,6 +109,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null">user_id,</if>
             <if test="permitType != null and permitType != ''">permit_type,</if>
+            <if test="permitDays != null and permitDays != ''">permit_days,</if>
             <if test="reason != null">reason,</if>
             <if test="startTime != null">start_time,</if>
             <if test="endTime != null">end_time,</if>
@@ -119,6 +122,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null">#{userId},</if>
             <if test="permitType != null and permitType != ''">#{permitType},</if>
+            <if test="permitDays != null and permitDays != ''">#{permitDays},</if>
             <if test="reason != null">#{reason},</if>
             <if test="startTime != null">#{startTime},</if>
             <if test="endTime != null">#{endTime},</if>
@@ -135,6 +139,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="userId != null">user_id = #{userId},</if>
             <if test="permitType != null and permitType != ''">permit_type = #{permitType},</if>
+            <if test="permitDays != null and permitDays != ''">permit_days = #{permitDays},</if>
             <if test="reason != null">reason = #{reason},</if>
             <if test="startTime != null">start_time = #{startTime},</if>
             <if test="endTime != null">end_time = #{endTime},</if>
