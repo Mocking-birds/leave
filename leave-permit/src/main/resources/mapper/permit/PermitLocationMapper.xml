@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leave.permit.mapper.PermitLocationMapper">
+    
+    <resultMap type="PermitLocation" id="PermitLocationResult">
+        <result property="locationId"    column="location_id"    />
+        <result property="leaveId"    column="leave_id"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="locationName"    column="location_name"    />
+        <result property="locationType"    column="location_type"    />
+    </resultMap>
+
+    <sql id="selectPermitLocationVo">
+        select location_id, leave_id, latitude, longitude, location_name, location_type from permit_location
+    </sql>
+
+    <select id="selectPermitLocationList" parameterType="PermitLocation" resultMap="PermitLocationResult">
+        <include refid="selectPermitLocationVo"/>
+        <where>  
+            <if test="leaveId != null "> and leave_id = #{leaveId}</if>
+            <if test="latitude != null  and latitude != ''"> and latitude = #{latitude}</if>
+            <if test="longitude != null  and longitude != ''"> and longitude = #{longitude}</if>
+            <if test="locationName != null  and locationName != ''"> and location_name like concat('%', #{locationName}, '%')</if>
+            <if test="locationType != null  and locationType != ''"> and location_type = #{locationType}</if>
+        </where>
+    </select>
+    
+    <select id="selectPermitLocationByLocationId" parameterType="String" resultMap="PermitLocationResult">
+        <include refid="selectPermitLocationVo"/>
+        where location_id = #{locationId}
+    </select>
+
+    <insert id="insertPermitLocation" parameterType="PermitLocation" useGeneratedKeys="true" keyProperty="locationId">
+        insert into permit_location
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="leaveId != null">leave_id,</if>
+            <if test="latitude != null">latitude,</if>
+            <if test="longitude != null">longitude,</if>
+            <if test="locationName != null">location_name,</if>
+            <if test="locationType != null">location_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="leaveId != null">#{leaveId},</if>
+            <if test="latitude != null">#{latitude},</if>
+            <if test="longitude != null">#{longitude},</if>
+            <if test="locationName != null">#{locationName},</if>
+            <if test="locationType != null">#{locationType},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePermitLocation" parameterType="PermitLocation">
+        update permit_location
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="leaveId != null">leave_id = #{leaveId},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="longitude != null">longitude = #{longitude},</if>
+            <if test="locationName != null">location_name = #{locationName},</if>
+            <if test="locationType != null">location_type = #{locationType},</if>
+        </trim>
+        where location_id = #{locationId}
+    </update>
+
+    <delete id="deletePermitLocationByLocationId" parameterType="String">
+        delete from permit_location where location_id = #{locationId}
+    </delete>
+
+    <delete id="deletePermitLocationByLocationIds" parameterType="String">
+        delete from permit_location where location_id in 
+        <foreach item="locationId" collection="array" open="(" separator="," close=")">
+            #{locationId}
+        </foreach>
+    </delete>
+</mapper>

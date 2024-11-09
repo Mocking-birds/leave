@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leave.permit.mapper.PermitLeaveMapper">
+    
+    <resultMap type="PermitLeave" id="PermitLeaveResult">
+        <result property="leaveId"    column="leave_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="permitType"    column="permit_type"    />
+        <result property="reason"    column="reason"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="isBack"    column="is_back"    />
+        <result property="leaveStatus"    column="leave_status"    />
+        <result property="permitTime"    column="permit_time"    />
+        <result property="backTime"    column="back_time"    />
+        <result property="createTime"   column="create_time"  />
+        <association property="user"    javaType="SysUser"         resultMap="userResult" />
+    </resultMap>
+
+    <resultMap type="PermitLeaveBack" id="PermitLeaveBackResult">
+        <result property="userId"    column="user_id"    />
+        <result property="isBack"    column="is_back"    />
+    </resultMap>
+
+    <resultMap id="userResult" type="SysUser">
+        <id     property="userId"    column="user_id"     />
+        <result property="userName"  column="user_name"   />
+        <result property="nickName"  column="nick_name"   />
+        <result property="sex" column="sex"   />
+    </resultMap>
+
+    <resultMap id="PermitLeavePermitLocationResult" type="PermitLeave" extends="PermitLeaveResult">
+        <collection property="permitLocationList" ofType="PermitLocation" column="leave_id" select="selectPermitLocationList" />
+    </resultMap>
+
+    <resultMap type="PermitLocation" id="PermitLocationResult">
+        <result property="locationId"    column="location_id"    />
+        <result property="leaveId"    column="leave_id"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="locationName"    column="location_name"    />
+        <result property="locationType"    column="location_type"    />
+    </resultMap>
+
+    <sql id="selectPermitLeaveVo">
+        select p.leave_id, p.user_id, p.permit_type, p.reason, p.start_time, p.end_time, p.is_back, p.leave_status, p.permit_time, p.back_time, p.create_time,
+        u.user_id, u.user_name, u.nick_name, u.sex
+        from permit_leave p
+            left join sys_user u on p.user_id = u.user_id
+    </sql>
+
+    <select id="selectPermitLeaveList" parameterType="PermitLeave" resultMap="PermitLeaveResult">
+        <include refid="selectPermitLeaveVo"/>
+        <where>  
+            <if test="permitType != null  and permitType != ''"> and permit_type = #{permitType}</if>
+            <if test="reason != null  and reason != ''"> and reason = #{reason}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="isBack != null  and isBack != ''"> and is_back = #{isBack}</if>
+            <if test="leaveStatus != null  and leaveStatus != ''"> and leave_status = #{leaveStatus}</if>
+            <if test="permitTime != null "> and permit_time = #{permitTime}</if>
+            <if test="backTime != null "> and back_time = #{backTime}</if>
+        </where>
+        ORDER BY
+        p.create_time DESC
+    </select>
+    
+    <select id="selectPermitLeaveByLeaveId" parameterType="Long" resultMap="PermitLeavePermitLocationResult">
+        select leave_id, user_id, permit_type, reason, start_time, end_time, is_back, leave_status, permit_time, back_time, create_time
+        from permit_leave
+        where leave_id = #{leaveId}
+        order by
+            create_time DESC
+    </select>
+
+    <select id="selectPermitLeaveListByUserId" parameterType="Long" resultMap="PermitLeavePermitLocationResult">
+        select leave_id, user_id, permit_type, reason, start_time, end_time, is_back, leave_status, permit_time, back_time, create_time
+        from permit_leave
+        where user_id = #{userId}
+        order by
+            create_time DESC
+    </select>
+
+    <select id="selectPermitLeaveListByIsBack" parameterType="PermitLeaveBack" resultMap="PermitLeavePermitLocationResult">
+        select p.leave_id, p.user_id, p.permit_type, p.reason, p.start_time, p.end_time, p.is_back, p.leave_status, p.permit_time, p.back_time, p.create_time
+        from permit_leave p
+        where
+            p.is_back = #{isBack}
+            <if test="userId != null and userId != ''">
+                And p.user_id = #{userId}
+            </if>
+            And p.leave_status = '1'
+        order by
+            p.create_time DESC
+    </select>
+
+    <select id="selectPermitLocationList" resultMap="PermitLocationResult">
+        select location_id, leave_id, latitude, longitude, location_name, location_type
+        from permit_location
+        where leave_id = #{leave_id}
+    </select>
+
+    <insert id="insertPermitLeave" parameterType="PermitLeave" useGeneratedKeys="true" keyProperty="leaveId">
+        insert into permit_leave
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="permitType != null and permitType != ''">permit_type,</if>
+            <if test="reason != null">reason,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="isBack != null">is_back,</if>
+            <if test="leaveStatus != null">leave_status,</if>
+            <if test="permitTime != null">permit_time,</if>
+            <if test="backTime != null">back_time,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="permitType != null and permitType != ''">#{permitType},</if>
+            <if test="reason != null">#{reason},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="isBack != null">#{isBack},</if>
+            <if test="leaveStatus != null">#{leaveStatus},</if>
+            <if test="permitTime != null">#{permitTime},</if>
+            <if test="backTime != null">#{backTime},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updatePermitLeave" parameterType="PermitLeave">
+        update permit_leave
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="permitType != null and permitType != ''">permit_type = #{permitType},</if>
+            <if test="reason != null">reason = #{reason},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="isBack != null">is_back = #{isBack},</if>
+            <if test="leaveStatus != null">leave_status = #{leaveStatus},</if>
+            <if test="permitTime != null">permit_time = #{permitTime},</if>
+            <if test="backTime != null">back_time = #{backTime},</if>
+        </trim>
+        where leave_id = #{leaveId}
+    </update>
+
+    <delete id="deletePermitLeaveByLeaveId" parameterType="Long">
+        delete from permit_leave where leave_id = #{leaveId}
+    </delete>
+
+    <delete id="deletePermitLeaveByLeaveIds" parameterType="String">
+        delete from permit_leave where leave_id in 
+        <foreach item="leaveId" collection="array" open="(" separator="," close=")">
+            #{leaveId}
+        </foreach>
+    </delete>
+    
+    <delete id="deletePermitLocationByLeaveIds" parameterType="String">
+        delete from permit_location where leave_id in 
+        <foreach item="leaveId" collection="array" open="(" separator="," close=")">
+            #{leaveId}
+        </foreach>
+    </delete>
+
+    <delete id="deletePermitLocationByLeaveId" parameterType="Long">
+        delete from permit_location where leave_id = #{leaveId}
+    </delete>
+
+    <insert id="batchPermitLocation">
+        insert into permit_location( location_id, leave_id, latitude, longitude, location_name, location_type) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.locationId}, #{item.leaveId}, #{item.latitude}, #{item.longitude}, #{item.locationName}, #{item.locationType})
+        </foreach>
+    </insert>
+</mapper>
