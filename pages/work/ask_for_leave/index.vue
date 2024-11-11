@@ -206,6 +206,7 @@
 						leaveStatus: '0',
 						permitTime: null,
 						backTime: null,
+						permitDays: null,
 						permitLocationList: [{
 							latitude: null,
 							longitude: null,
@@ -215,8 +216,6 @@
 					}
 				} else {
 					const res = await getPermit(this.id)
-					console.log('333');
-					console.log(res);
 					this.leaveForm = res.data
 					// this.leaveForm.permitLocationList[1] = {
 					// 	latitude: null,
@@ -237,36 +236,51 @@
 
 			// 计算请假天数
 			comDays() {
-				// 判断非空
-				if (!this.leaveForm.startTime || !this.leaveForm.endTime) {
-					return 0;
+				if(this.type == '请假'){
+					// 判断非空
+					if (!this.leaveForm.startTime || !this.leaveForm.endTime) {
+						return 0;
+					}
+					
+					// 将日期字符串转换为Date对象  
+					const date1 = new Date(this.leaveForm.startTime);
+					const date2 = new Date(this.leaveForm.endTime);
+					
+					// 计算时间差（毫秒）  
+					const timeDifference = Math.abs(date2 - date1);
+					
+					// 将时间差转换为天数(向上取整)
+					const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+					
+					this.leaveForm.permitDays = daysDifference
+					
+					return daysDifference;
+				}else{
+					return this.leaveForm.permitDays;
 				}
-
-				// 将日期字符串转换为Date对象  
-				const date1 = new Date(this.leaveForm.startTime);
-				const date2 = new Date(this.leaveForm.endTime);
-
-				// 计算时间差（毫秒）  
-				const timeDifference = Math.abs(date2 - date1);
-
-				// 将时间差转换为天数(向上取整)
-				const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-
-				return daysDifference;
+				
 			},
 
 			//取消
 			cancelButton() {
-				uni.navigateBack()
+				// 因为请假界面不是使用组件而是使用的是页面跳转，使用uni.navigateBack()的话会跳转到一个空界面
+				if(this.type == '请假'){
+					uni.switchTab({
+						url: '/pages/work/index'
+					})
+				}else{
+					uni.navigateBack()
+				}
 			},
 
 			//确认
 			async sureButton() {
 				
-				console.log('123');
+				console.log('确认');
+				
+				console.log(this.leaveForm);
 
 				if (this.type == '请假'?!this.leaveForm.permitLocationList[0].locationName:(this.leaveForm.permitLocationList[1]== undefined?true:false)) {
-					console.log('222');
 					this.msgLocationText = '请获取你的位置信息'
 					this.$refs.msgLocation.open()
 				} else {
@@ -375,16 +389,13 @@
 		async created() {
 			const res = await getInfo()
 			this.userInfo = res
-			console.log(res);
 			console.log('leaveForm');
 			console.log(this.leaveForm);
 		},
 		onLoad(params) {
-			console.log(params);
 			this.id = params.id
 			this.type = params.type
 			this.role = params.role
-			console.log('123');
 			this.getData()
 		},
 		mounted() {

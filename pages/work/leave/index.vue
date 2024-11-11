@@ -95,6 +95,10 @@
 			
 			// 设置title
 			setTitle(item){
+				
+				console.log('title');
+				console.log(item);
+				
 				let first = ''
 				let second = ''
 				
@@ -108,13 +112,13 @@
 				
 				if(item.leaveStatus == '0'){
 					second = '未审批'
-				}else if(item.second == '1'){
+				}else if(item.leaveStatus == '1'){
 					second = '已同意'
-				}else if(item.second == '2'){
+				}else if(item.leaveStatus == '2'){
 					second = '已驳回'
 				}
 				
-				return '请假' + first + ' —— ' + second
+				return first + ' —— 请假' + second
 			}
 		},
 		async created() {
