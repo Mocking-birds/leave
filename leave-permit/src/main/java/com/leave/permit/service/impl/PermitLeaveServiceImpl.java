@@ -1,6 +1,8 @@
 package com.leave.permit.service.impl;
 
 import java.util.List;
+
+import com.leave.permit.domain.vo.PermitLeaveDept;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -57,6 +59,17 @@ public class PermitLeaveServiceImpl implements IPermitLeaveService
     @Override
     public List<PermitLeave> selectPermitLeaveListByUserId(Long userId) {
         return permitLeaveMapper.selectPermitLeaveListByUserId(userId);
+    }
+
+    /**
+     * 查询对应系部或专业对应假条信息（通过部门id）
+     *
+     * @param permitLeaveDept
+     * @return 假条信息
+     */
+    @Override
+    public List<PermitLeave> selectPermitLeaveListByDeptId(PermitLeaveDept permitLeaveDept) {
+        return permitLeaveMapper.selectPermitLeaveListByDeptId(permitLeaveDept);
     }
 
     /**

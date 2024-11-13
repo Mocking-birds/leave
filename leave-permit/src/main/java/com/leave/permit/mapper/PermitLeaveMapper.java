@@ -4,6 +4,7 @@ import java.util.List;
 import com.leave.permit.domain.PermitLeave;
 import com.leave.permit.domain.vo.PermitLeaveBack;
 import com.leave.permit.domain.PermitLocation;
+import com.leave.permit.domain.vo.PermitLeaveDept;
 
 /**
  * 假条信息Mapper接口
@@ -28,6 +29,14 @@ public interface PermitLeaveMapper
      * @return 假条信息
      */
     public List<PermitLeave> selectPermitLeaveListByUserId(Long userId);
+
+    /**
+     * 查询对应系部或专业对应假条信息（通过部门id）
+     *
+     * @param permitLeaveDept
+     * @return 假条信息
+     */
+    public List<PermitLeave> selectPermitLeaveListByDeptId(PermitLeaveDept permitLeaveDept);
 
     /**
      * 查询假条信息列表（用户id,是否销假）

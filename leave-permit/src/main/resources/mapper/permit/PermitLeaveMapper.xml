@@ -25,11 +25,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="isBack"    column="is_back"    />
     </resultMap>
 
+    <resultMap type="PermitLeaveDept" id="PermitLeaveDeptResult">
+        <result property="deptId"    column="dept_id"    />
+        <result property="specialConditions"    column="special_conditions"     />
+    </resultMap>
+
+    <resultMap id="deptResult" type="SysDept">
+        <id     property="deptId"    column="dept_id"     />
+        <result property="parentId"  column="parent_id"   />
+        <result property="deptName"  column="dept_name"   />
+        <result property="parentName" column="parent_name" />
+        <result property="ancestors" column="ancestors"   />
+        <result property="orderNum"  column="order_num"   />
+        <result property="leader"    column="leader"      />
+        <result property="status"    column="dept_status" />
+    </resultMap>
+
     <resultMap id="userResult" type="SysUser">
         <id     property="userId"    column="user_id"     />
         <result property="userName"  column="user_name"   />
         <result property="nickName"  column="nick_name"   />
         <result property="sex" column="sex"   />
+        <result property="deptId"  column="dept_id"   />
+        <association property="dept"    javaType="SysDept"         resultMap="deptResult" />
     </resultMap>
 
     <resultMap id="PermitLeavePermitLocationResult" type="PermitLeave" extends="PermitLeaveResult">
@@ -47,14 +65,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="selectPermitLeaveVo">
         select p.leave_id, p.user_id, p.permit_type, p.reason, p.start_time, p.end_time, p.is_back, p.leave_status, p.permit_time, p.back_time, p.create_time,p.permit_days,
-        u.user_id, u.user_name, u.nick_name, u.sex
+        u.user_id, u.user_name, u.nick_name, u.sex, u.dept_id,
+        d.dept_id, d.parent_id, d.dept_name, (select dept_name from sys_dept where dept_id = d.parent_id) parent_name, d.ancestors, d.order_num, d.leader, d.status as dept_status
         from permit_leave p
             left join sys_user u on p.user_id = u.user_id
+            left join sys_dept d on u.dept_id = d.dept_id
     </sql>
 
     <select id="selectPermitLeaveList" parameterType="PermitLeave" resultMap="PermitLeaveResult">
         <include refid="selectPermitLeaveVo"/>
-        <where>  
+        <where>
             <if test="permitType != null  and permitType != ''"> and permit_type = #{permitType}</if>
             <if test="reason != null  and reason != ''"> and reason = #{reason}</if>
             <if test="startTime != null "> and start_time = #{startTime}</if>
@@ -96,6 +116,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             And p.leave_status = '1'
         order by
             p.create_time DESC
+    </select>
+
+    <select id="selectPermitLeaveListByDeptId" parameterType="PermitLeaveDept" resultMap="PermitLeavePermitLocationResult">
+        <include refid="selectPermitLeaveVo"/>
+        where
+            d.dept_id = #{deptId}
+        <if test="specialConditions == true">
+            And p.permit_days > 7
+        </if>
+        <if test="specialConditions == false">
+            And p.permit_days &lt;= 7
+        </if>
+        order by
+        p.create_time DESC
     </select>
 
     <select id="selectPermitLocationList" resultMap="PermitLocationResult">

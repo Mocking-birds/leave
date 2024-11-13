@@ -2,6 +2,8 @@ package com.leave.permit.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.leave.permit.domain.vo.PermitLeaveDept;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,6 +70,18 @@ public class PermitLeaveController extends BaseController
     {
         startPage();
         List<PermitLeave> list = permitLeaveService.selectPermitLeaveListByIsBack(permitLeaveBack);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询对应系部或专业对应假条信息（通过部门id）
+     */
+    @PreAuthorize("@ss.hasPermi('permit:permit:query')")
+    @GetMapping(value = "/list/dept")
+    public TableDataInfo listByDeptId(PermitLeaveDept permitLeaveDept)
+    {
+        startPage();
+        List<PermitLeave> list = permitLeaveService.selectPermitLeaveListByDeptId(permitLeaveDept);
         return getDataTable(list);
     }
 

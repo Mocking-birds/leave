@@ -299,7 +299,8 @@
 </template>
 
 <script>
-import { listPermit, getPermit, delPermit, addPermit, updatePermit } from "@/api/permit/permit";
+import { listPermit, getPermit, delPermit, addPermit, updatePermit, listPermitByDept } from "@/api/permit/permit";
+import user from "@/store/modules/user"
 
 export default {
   name: "Permit",
@@ -358,20 +359,32 @@ export default {
     };
   },
   created() {
+    console.log(user)
     this.getList();
   },
   methods: {
     /** 查询假条信息列表 */
-    getList() {
+    async getList() {
       this.loading = true;
-      listPermit(this.queryParams).then(response => {
-        this.permitList = response.rows;
-        this.total = response.total;
-        this.loading = false;
+      // 根据role权限限定列表
+      // 超级管理员
+      if(user.state.roles[0] == 'admin'){
+        const res = await listPermit(this.queryParams)
+        this.permitList = res.rows;
+        this.total = res.total;
+      }else if(user.state.roles[0] == 'director'){
+        // 主任
+        const res = await listPermitByDept(user.state.dept.deptId)
+        console.log(res)
+        this.permitList = res.rows
+        this.total = res.total
+      }
 
-        console.log(this.permitList)
-      });
+      this.loading = false;
+
+      console.log(this.permitList)
     },
+
     // 取消按钮
     cancel() {
       this.open = false;

@@ -23,6 +23,15 @@ export function listBackPermit(query,id,back) {
   })
 }
 
+// 查询对应系部或专业对应假条信息（通过部门id）
+export function listPermitByDept(query,id){
+  return request({
+    url: '/permit/permit/list/dept/' + id,
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询假条信息详细
 export function getPermit(leaveId) {
   return request({

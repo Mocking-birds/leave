@@ -8,7 +8,8 @@ const user = {
     name: '',
     avatar: '',
     roles: [],
-    permissions: []
+    permissions: [],
+    dept: {}
   },
 
   mutations: {
@@ -29,6 +30,9 @@ const user = {
     },
     SET_PERMISSIONS: (state, permissions) => {
       state.permissions = permissions
+    },
+    SET_DEPT: (state, dept) => {
+      state.dept = dept
     }
   },
 
@@ -65,6 +69,7 @@ const user = {
           commit('SET_ID', user.userId)
           commit('SET_NAME', user.userName)
           commit('SET_AVATAR', avatar)
+          commit('SET_DEPT',user.dept)
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -79,6 +84,7 @@ const user = {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           commit('SET_PERMISSIONS', [])
+          commit('SET_DEPT', {})
           removeToken()
           resolve()
         }).catch(error => {
