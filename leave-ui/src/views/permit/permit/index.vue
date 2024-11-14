@@ -367,17 +367,17 @@ export default {
     async getList() {
       this.loading = true;
       // 根据role权限限定列表
-      // 超级管理员
-      if(user.state.roles[0] == 'admin'){
-        const res = await listPermit(this.queryParams)
-        this.permitList = res.rows;
-        this.total = res.total;
-      }else if(user.state.roles[0] == 'director'){
-        // 主任
-        const res = await listPermitByDept(user.state.dept.deptId)
+      // 辅导员
+      if(user.state.roles[0] == 'counsellor'){
+        const res = await listPermitByDept({pageNum: this.queryParams.pageNum, pageSize: this.queryParams.pageSize},user.state.dept.deptId,false)
+        console.log('辅导员')
         console.log(res)
         this.permitList = res.rows
         this.total = res.total
+      }else{
+        const res = await listPermit(this.queryParams)
+        this.permitList = res.rows;
+        this.total = res.total;
       }
 
       this.loading = false;
