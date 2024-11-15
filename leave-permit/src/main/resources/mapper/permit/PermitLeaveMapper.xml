@@ -120,13 +120,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectPermitLeaveListByDeptId" parameterType="PermitLeaveDept" resultMap="PermitLeavePermitLocationResult">
         <include refid="selectPermitLeaveVo"/>
-        where
-            d.dept_id = #{deptId}
+        where 1=1
+        <if test="deptId != null and deptId != ''">
+            and d.parent_id = #{deptId}
+        </if>
+        <if test="leaveStatus != null  and leaveStatus != ''">
+            and leave_status = #{leaveStatus}
+        </if>
+        <if test="isBack != null  and isBack != ''">
+            and is_back = #{isBack}
+        </if>
         <if test="specialConditions == true">
-            And p.permit_days > 7
+            and p.permit_days > 7
         </if>
         <if test="specialConditions == false">
-            And p.permit_days &lt;= 7
+            and p.permit_days &lt;= 7
         </if>
         order by
         p.create_time DESC

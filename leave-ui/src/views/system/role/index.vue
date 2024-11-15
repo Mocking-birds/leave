@@ -348,7 +348,12 @@ export default {
     /** 查询角色列表 */
     getList() {
       this.loading = true;
+      console.log('list')
+      console.log(this.queryParams)
+      console.log(this.dateRange)
+      console.log(this.addDateRange(this.queryParams, this.dateRange))
       listRole(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+        console.log(response)
           this.roleList = response.rows;
           this.total = response.total;
           this.loading = false;

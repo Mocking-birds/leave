@@ -73,6 +73,7 @@ public class PermitLeaveController extends BaseController
         return getDataTable(list);
     }
 
+
     /**
      * 查询对应系部或专业对应假条信息（通过部门id）
      */

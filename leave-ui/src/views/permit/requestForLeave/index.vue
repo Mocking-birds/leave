@@ -218,7 +218,8 @@
 </template>
 
 <script>
-import { listPermit, getPermit, delPermit, addPermit, updatePermit } from "@/api/permit/permit";
+import { listPermit, getPermit, delPermit, addPermit, updatePermit, listPermitByDept } from "@/api/permit/permit";
+import user from "@/store/modules/user"
 
 export default {
   name: "Permit",
@@ -281,15 +282,38 @@ export default {
   },
   methods: {
     /** 查询假条信息列表 */
-    getList() {
+    async getList() {
       this.loading = true;
-      listPermit(this.queryParams).then(response => {
-        this.permitList = response.rows;
-        this.total = response.total;
-        this.loading = false;
 
-        console.log(this.permitList)
-      });
+      if(user.state.roles[0] == 'admin'){
+        // 超级管理员
+        let res = await listPermitByDept({pageNum: this.queryParams.pageNum, pageSize: this.queryParams.pageSize},'',0,'','')
+        this.permitList = res.rows
+        this.total = res.total
+        console.log(res)
+      }else if(user.state.roles[0] == 'director'){
+        // 系主任
+        let res = await listPermitByDept({pageNum: this.queryParams.pageNum, pageSize: this.queryParams.pageSize},user.state.dept.deptId,0,'',true)
+        this.permitList = res.rows
+        this.total = res.total
+        console.log(res)
+      }else if(user.state.roles[0] == 'counsellor'){
+        // 辅导员
+        let res = await listPermitByDept({pageNum: this.queryParams.pageNum, pageSize: this.queryParams.pageSize},user.state.dept.deptId,0,'',false)
+        this.permitList = res.rows
+        this.total = res.total
+        console.log(res)
+      }
+
+      this.loading = false;
+
+      // listPermit(this.queryParams).then(response => {
+      //   this.permitList = response.rows;
+      //   this.total = response.total;
+      //   this.loading = false;
+      //
+      //   console.log(this.permitList)
+      // });
     },
     // 取消按钮
     cancel() {

@@ -24,7 +24,7 @@ export function listBackPermit(query,id,back) {
 }
 
 // 查询对应系部或专业对应假条信息（通过部门id）
-export function listPermitByDept(query,id,specialConditions){
+export function listPermitByDept(query,id,leaveStatus,isBack,specialConditions){
   return request({
     url: '/permit/permit/list/dept',
     method: 'get',
@@ -32,6 +32,8 @@ export function listPermitByDept(query,id,specialConditions){
       pageNum:query.pageNum,
       pageSize:query.pageSize,
       deptId:id,
+      leaveStatus:leaveStatus,
+      isBack:isBack,
       specialConditions:specialConditions
     }
   })

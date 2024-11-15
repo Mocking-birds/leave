@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row :gutter="20">
       <!--部门数据-->
-      <el-col :span="4" :xs="24">
+      <el-col :span="4" :xs="24" v-if="user.state.roles[0] != 'counsellor'">
         <div class="head-container">
           <el-input
             v-model="deptName"
@@ -63,17 +63,17 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="创建时间">
-            <el-date-picker
-              v-model="dateRange"
-              style="width: 240px"
-              value-format="yyyy-MM-dd"
-              type="daterange"
-              range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            ></el-date-picker>
-          </el-form-item>
+<!--          <el-form-item label="创建时间">-->
+<!--            <el-date-picker-->
+<!--              v-model="dateRange"-->
+<!--              style="width: 240px"-->
+<!--              value-format="yyyy-MM-dd"-->
+<!--              type="daterange"-->
+<!--              range-separator="-"-->
+<!--              start-placeholder="开始日期"-->
+<!--              end-placeholder="结束日期"-->
+<!--            ></el-date-picker>-->
+<!--          </el-form-item>-->
           <el-form-item>
             <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
             <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -344,6 +344,7 @@
 <script>
 import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus, deptTreeSelect } from "@/api/system/user";
 import { getToken } from "@/utils/auth";
+import user from "@/store/modules/user"
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
@@ -367,6 +368,8 @@ export default {
       total: 0,
       // 用户表格数据
       userList: null,
+      //用户基础数据
+      user: user,
       // 弹出层标题
       title: "",
       // 部门树选项
@@ -461,6 +464,8 @@ export default {
     }
   },
   created() {
+    this.queryParams.deptId = user.state.dept.deptId
+    console.log(this.user)
     this.getList();
     this.getDeptTree();
     this.getConfigKey("sys.user.initPassword").then(response => {
@@ -481,9 +486,26 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getDeptTree() {
-      deptTreeSelect().then(response => {
-        this.deptOptions = response.data;
+      let treeData = ''
+      deptTreeSelect(user.state.dept.deptId).then(response => {
+        console.log('下拉查询')
+        console.log(response)
+        treeData = response.data
+        console.log(treeData)
+
+        if(user.state.roles[0] == 'admin'){
+          // 超级管理员
+          this.deptOptions = treeData
+        }else if(user.state.roles[0] == 'director'){
+          // 系主任
+          treeData[0].children = [treeData[0].children.find(item => item.id === user.state.dept.deptId)]
+          this.deptOptions = treeData
+        }else {
+          // 辅导员
+        }
       });
+
+
     },
     // 筛选节点
     filterNode(value, data) {
