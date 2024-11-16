@@ -121,6 +121,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectPermitLeaveListByDeptId" parameterType="PermitLeaveDept" resultMap="PermitLeavePermitLocationResult">
         <include refid="selectPermitLeaveVo"/>
         where 1=1
+        <if test="permitType != null  and permitType != ''">
+            and permit_type = #{permitType}
+        </if>
         <if test="deptId != null and deptId != ''">
             and d.parent_id = #{deptId}
         </if>

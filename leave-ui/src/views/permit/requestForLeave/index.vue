@@ -1,38 +1,54 @@
 <template>
   <div class="app-container">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="请假类型" prop="permitType">
+        <el-select v-model="queryParams.permitType" placeholder="请选择请假类型" clearable>
+          <el-option
+            v-for="dict in dict.type.permit_leave_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+      </el-form-item>
+    </el-form>
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['permit:permit:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['permit:permit:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['permit:permit:remove']"
-        >删除</el-button>
-      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          icon="el-icon-plus"-->
+<!--          size="mini"-->
+<!--          @click="handleAdd"-->
+<!--          v-hasPermi="['permit:permit:add']"-->
+<!--        >新增</el-button>-->
+<!--      </el-col>-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="success"-->
+<!--          plain-->
+<!--          icon="el-icon-edit"-->
+<!--          size="mini"-->
+<!--          :disabled="single"-->
+<!--          @click="handleUpdate"-->
+<!--          v-hasPermi="['permit:permit:edit']"-->
+<!--        >修改</el-button>-->
+<!--      </el-col>-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="danger"-->
+<!--          plain-->
+<!--          icon="el-icon-delete"-->
+<!--          size="mini"-->
+<!--          :disabled="multiple"-->
+<!--          @click="handleDelete"-->
+<!--          v-hasPermi="['permit:permit:remove']"-->
+<!--        >删除</el-button>-->
+<!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -48,7 +64,7 @@
 
     <el-table v-if="Array.isArray(permitList)" v-loading="loading" :data="permitList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="假条id" align="center" prop="leaveId" />
+<!--      <el-table-column label="假条id" align="center" prop="leaveId" />-->
       <el-table-column label="用户姓名" align="center" prop="user.userName" />
       <el-table-column label="请假类型" align="center" prop="permitType">
         <template slot-scope="scope">
@@ -66,17 +82,21 @@
           <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否销假" align="center" prop="isBack">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.permit_is_back" :value="scope.row.isBack"/>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="是否销假" align="center" prop="isBack">-->
+<!--        <template slot-scope="scope">-->
+<!--          <dict-tag :options="dict.type.permit_is_back" :value="scope.row.isBack"/>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="请假状态" align="center" prop="leaveStatus">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.permit_leave_status" :value="scope.row.leaveStatus"/>
         </template>
       </el-table-column>
-      <el-table-column label="请假天数" align="center" :formatter="getDays"/>
+      <el-table-column label="请假天数" align="center">
+        <template slot-scope="scope">
+          {{scope.row.permitDays}}天
+        </template>
+      </el-table-column>
       <el-table-column label="请假时间" align="center" prop="permitTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.permitTime, '{y}-{m}-{d}') }}</span>
@@ -90,19 +110,23 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
-            size="mini"
+            class = 'pass'
+            size="default"
             type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
+            icon="el-icon-success"
+            @click="handleUpdate(scope.row,'1')"
             v-hasPermi="['permit:permit:edit']"
-          >修改</el-button>
+          >
+            通过
+          </el-button>
           <el-button
-            size="mini"
+            class="defeat"
+            size="default"
             type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['permit:permit:remove']"
-          >删除</el-button>
+            icon="el-icon-error"
+            @click="handleUpdate(scope.row,'2')"
+            v-hasPermi="['permit:permit:edit']"
+          > 驳回</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -114,106 +138,6 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
-    <!-- 添加或修改假条信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户id" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户id" />
-        </el-form-item>
-        <el-form-item label="请假类型" prop="permitType">
-          <el-select v-model="form.permitType" placeholder="请选择请假类型">
-            <el-option
-              v-for="dict in dict.type.permit_leave_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="请假理由" prop="reason">
-          <el-input v-model="form.reason" placeholder="请输入请假理由" />
-        </el-form-item>
-        <el-form-item label="起始日期" prop="startTime">
-          <el-date-picker clearable
-                          v-model="form.startTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择起始日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="结束日期" prop="endTime">
-          <el-date-picker clearable
-                          v-model="form.endTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择结束日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="是否销假" prop="isBack">
-          <el-radio-group v-model="form.isBack">
-            <el-radio
-              v-for="dict in dict.type.permit_is_back"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="请假状态" prop="leaveStatus">
-          <el-radio-group v-model="form.leaveStatus">
-            <el-radio
-              v-for="dict in dict.type.permit_leave_status"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-divider content-position="center">位置信息信息</el-divider>
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddPermitLocation">添加</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeletePermitLocation">删除</el-button>
-          </el-col>
-        </el-row>
-        <el-table :data="permitLocationList" :row-class-name="rowPermitLocationIndex" @selection-change="handlePermitLocationSelectionChange" ref="permitLocation">
-          <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="序号" align="center" prop="index" width="50"/>
-          <el-table-column label="纬度" prop="latitude" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.latitude" placeholder="请输入纬度" />
-            </template>
-          </el-table-column>
-          <el-table-column label="经度" prop="longitude" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.longitude" placeholder="请输入经度" />
-            </template>
-          </el-table-column>
-          <el-table-column label="位置名称" prop="locationName" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.locationName" placeholder="请输入位置名称" />
-            </template>
-          </el-table-column>
-          <el-table-column label="位置类型" prop="locationType" width="150">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.locationType" placeholder="请选择位置类型">
-                <el-option
-                  v-for="dict in dict.type.permit_location_type"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
-              </el-select>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -246,20 +170,13 @@ export default {
       permitLocationList: [],
       // 弹出层标题
       title: "",
-      // 是否显示弹出层
-      open: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         permitType: null,
-        reason: null,
-        startTime: null,
-        endTime: null,
         isBack: null,
-        leaveStatus: null,
-        permitTime: null,
-        backTime: null
+        leaveStatus: 0,
       },
       // 表单参数
       form: {},
@@ -281,25 +198,25 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询假条信息列表 */
+    /** 查询请假假条信息列表 */
     async getList() {
       this.loading = true;
 
       if(user.state.roles[0] == 'admin'){
         // 超级管理员
-        let res = await listPermitByDept({pageNum: this.queryParams.pageNum, pageSize: this.queryParams.pageSize},'',0,'','')
+        let res = await listPermitByDept(this.queryParams,'','')
         this.permitList = res.rows
         this.total = res.total
         console.log(res)
       }else if(user.state.roles[0] == 'director'){
         // 系主任
-        let res = await listPermitByDept({pageNum: this.queryParams.pageNum, pageSize: this.queryParams.pageSize},user.state.dept.deptId,0,'',true)
+        let res = await listPermitByDept(this.queryParams,user.state.dept.deptId,true)
         this.permitList = res.rows
         this.total = res.total
         console.log(res)
       }else if(user.state.roles[0] == 'counsellor'){
         // 辅导员
-        let res = await listPermitByDept({pageNum: this.queryParams.pageNum, pageSize: this.queryParams.pageSize},user.state.dept.deptId,0,'',false)
+        let res = await listPermitByDept(this.queryParams,user.state.dept.parentId,false)
         this.permitList = res.rows
         this.total = res.total
         console.log(res)
@@ -314,11 +231,6 @@ export default {
       //
       //   console.log(this.permitList)
       // });
-    },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
     },
     // 表单重置
     reset() {
@@ -340,6 +252,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      console.log(this.queryParams)
       this.getList();
     },
     /** 重置按钮操作 */
@@ -353,110 +266,48 @@ export default {
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加假条信息";
-    },
     /** 修改按钮操作 */
-    handleUpdate(row) {
+    async handleUpdate(row,status) {
+      console.log(row)
       this.reset();
-      const leaveId = row.leaveId || this.ids
-      getPermit(leaveId).then(response => {
-        this.form = response.data;
-        this.permitLocationList = response.data.permitLocationList;
-        this.open = true;
-        this.title = "修改假条信息";
-      });
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          this.form.permitLocationList = this.permitLocationList;
-          if (this.form.leaveId != null) {
-            updatePermit(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addPermit(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const leaveIds = row.leaveId || this.ids;
-      this.$modal.confirm('是否确认删除假条信息编号为"' + leaveIds + '"的数据项？').then(function() {
-        return delPermit(leaveIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
-    },
-    /** 位置信息序号 */
-    rowPermitLocationIndex({ row, rowIndex }) {
-      row.index = rowIndex + 1;
-    },
-    /** 位置信息添加按钮操作 */
-    handleAddPermitLocation() {
-      let obj = {};
-      obj.latitude = "";
-      obj.longitude = "";
-      obj.locationName = "";
-      obj.locationType = "";
-      this.permitLocationList.push(obj);
-    },
-    /** 位置信息删除按钮操作 */
-    handleDeletePermitLocation() {
-      if (this.checkedPermitLocation.length == 0) {
-        this.$modal.msgError("请先选择要删除的位置信息数据");
-      } else {
-        const permitLocationList = this.permitLocationList;
-        const checkedPermitLocation = this.checkedPermitLocation;
-        this.permitLocationList = permitLocationList.filter(function(item) {
-          return checkedPermitLocation.indexOf(item.index) == -1
-        });
-      }
-    },
-    /** 复选框选中数据 */
-    handlePermitLocationSelectionChange(selection) {
-      this.checkedPermitLocation = selection.map(item => item.index)
+      // const leaveId = row.leaveId || this.ids
+      this.form = row
+      this.form.leaveStatus = status
+      console.log(this.form)
+      const res = await updatePermit(this.form)
+      console.log(res)
+      this.$modal.msgSuccess("修改成功");
+      // this.open = false;
+      await this.getList();
     },
     /** 导出按钮操作 */
     handleExport() {
       this.download('permit/permit/export', {
         ...this.queryParams
       }, `permit_${new Date().getTime()}.xlsx`)
-    },
-
-    // 获取天数
-    getDays(row) {
-      // 判断非空
-      if (!row.startTime || !row.endTime) {
-        return 0;
-      }
-
-
-      // 将日期字符串转换为Date对象
-      const date1 = new Date(row.startTime);
-      const date2 = new Date(row.endTime);
-
-      // 计算时间差（毫秒）
-      const timeDifference = Math.abs(date2 - date1);
-
-      // 将时间差转换为天数(向上取整)
-      const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-
-      return daysDifference + '天';
     }
   }
 };
 </script>
+<style>
+.pass,.defeat{
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.pass{
+  color: #67C23A;
+}
+
+.pass:hover{
+  color: #3d9b09;
+}
+
+.defeat{
+  color: #F56C6C;
+}
+
+.defeat:hover{
+  color: #a86b76;
+}
+</style>

@@ -18,6 +18,18 @@ public class PermitLeaveDept extends BaseEntity {
     @Excel(name = "是否销假", readConverterExp = "0=:未销假，,1=：已销假")
     private String isBack;
 
+    /** 请假类型（0：病假，1：事假） */
+    @Excel(name = "请假类型", readConverterExp = "0=：病假，1：事假")
+    private String permitType;
+
+    public String getPermitType() {
+        return permitType;
+    }
+
+    public void setPermitType(String permitType) {
+        this.permitType = permitType;
+    }
+
     public String getLeaveStatus() {
         return leaveStatus;
     }
