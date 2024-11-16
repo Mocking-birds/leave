@@ -8,7 +8,7 @@ public class PermitLeaveDept extends BaseEntity {
     private Long deptId;
 
     // 特殊条件开启
-    private Boolean specialConditions;
+    private String specialConditions;
 
     // 请假状态
     @Excel(name = "请假状态", readConverterExp = "0=：未审批，1：已同意，2：已驳回")
@@ -42,11 +42,11 @@ public class PermitLeaveDept extends BaseEntity {
         this.deptId = deptId;
     }
 
-    public Boolean getSpecialConditions() {
+    public String getSpecialConditions() {
         return specialConditions;
     }
 
-    public void setSpecialConditions(Boolean specialConditions) {
+    public void setSpecialConditions(String specialConditions) {
         this.specialConditions = specialConditions;
     }
 }

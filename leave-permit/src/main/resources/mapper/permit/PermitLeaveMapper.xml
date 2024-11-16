@@ -130,10 +130,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="isBack != null  and isBack != ''">
             and is_back = #{isBack}
         </if>
-        <if test="specialConditions == true">
+        <if test="specialConditions != '' and specialConditions != null and specialConditions == 'true'">
             and p.permit_days > 7
         </if>
-        <if test="specialConditions == false">
+        <if test="specialConditions != '' and specialConditions != null and specialConditions == 'false'">
             and p.permit_days &lt;= 7
         </if>
         order by

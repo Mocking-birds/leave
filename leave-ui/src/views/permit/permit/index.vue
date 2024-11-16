@@ -370,7 +370,7 @@ export default {
 
       if(user.state.roles[0] == 'counsellor'){
         // 辅导员
-        const res = await listPermitByDept({pageNum: this.queryParams.pageNum, pageSize: this.queryParams.pageSize},user.state.dept.deptId,'','',false)
+        const res = await listPermitByDept({pageNum: this.queryParams.pageNum, pageSize: this.queryParams.pageSize},user.state.dept.parentId,'','','')
         console.log('辅导员')
         console.log(res)
         this.permitList = res.rows
