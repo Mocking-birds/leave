@@ -41,13 +41,13 @@ public class PermitLeave extends BaseEntity
     private Long permitDays;
 
     /** 起始日期 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "起始日期", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "起始日期", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date startTime;
 
     /** 结束日期 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "结束日期", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "结束日期", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
     /** 是否销假（0:未销假， 1：已销假） */
@@ -59,13 +59,13 @@ public class PermitLeave extends BaseEntity
     private String leaveStatus;
 
     /** 请假时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "请假时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "请假时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date permitTime;
 
     /** 销假时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "销假时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "销假时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date backTime;
 
     /** 用户对象 */

@@ -74,12 +74,12 @@
       <el-table-column label="请假理由" align="center" prop="reason" />
       <el-table-column label="起始日期" align="center" prop="startTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="结束日期" align="center" prop="endTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="是否销假" align="center" prop="isBack">
@@ -99,12 +99,12 @@
       </el-table-column>
       <el-table-column label="请假时间" align="center" prop="permitTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.permitTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.permitTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="销假时间" align="center" prop="backTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.backTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.backTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -273,6 +273,7 @@ export default {
       // const leaveId = row.leaveId || this.ids
       this.form = row
       this.form.isBack = status
+      this.form.backTime = this.getCurrentTime()
       console.log(this.form)
       const res = await updatePermit(this.form)
       console.log(res)
@@ -285,6 +286,21 @@ export default {
       this.download('permit/permit/export', {
         ...this.queryParams
       }, `permit_${new Date().getTime()}.xlsx`)
+    },
+    //获取当前时间
+    getCurrentTime() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要加1
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const currentTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+
+      console.log(currentTime);
+      return currentTime;
     }
   }
 };

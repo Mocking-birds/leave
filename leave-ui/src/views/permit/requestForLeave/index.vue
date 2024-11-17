@@ -74,12 +74,12 @@
       <el-table-column label="请假理由" align="center" prop="reason" />
       <el-table-column label="起始日期" align="center" prop="startTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="结束日期" align="center" prop="endTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
 <!--      <el-table-column label="是否销假" align="center" prop="isBack">-->
@@ -99,12 +99,12 @@
       </el-table-column>
       <el-table-column label="请假时间" align="center" prop="permitTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.permitTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.permitTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="销假时间" align="center" prop="backTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.backTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.backTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
