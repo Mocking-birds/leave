@@ -190,7 +190,9 @@ export default {
 
       // 遍历接口返回的数据
       this.backForLeaveList.forEach(item => {
-        let itemDate = new Date(item.permitTime);
+        console.log('item')
+        console.log(item)
+        let itemDate = new Date(item.backTime);
         let itemYear = itemDate.getFullYear();
         let itemMonth = itemDate.getMonth() + 1; // 月份从0开始，需要加1
 
@@ -202,6 +204,7 @@ export default {
       });
 
       // 输出本月的数据
+      console.log('本月数据')
       console.log(thisMonthBackData);
 
       this.monthBackForLeaveTotal = thisMonthBackData.length
