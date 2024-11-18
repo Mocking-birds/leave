@@ -9,6 +9,23 @@ export function listPermit(query) {
   })
 }
 
+// 查询对应系部或专业对应假条信息（通过部门id）
+export function listPermitByDept(query,deptId,specialConditions){
+  return request({
+    url: '/permit/permit/list/dept',
+    method: 'get',
+    params: {
+      pageNum: query.pageNum,
+      pageSize: query.pageSize,
+      leaveStatus: query.leaveStatus,
+      isBack: query.isBack,
+      permitType: query.permitType,
+      deptId: deptId,
+      specialConditions: specialConditions
+    }
+  })
+}
+
 // 新增假条信息
 export function listPermitByUserId(query,id) {
   return request({

@@ -113,6 +113,11 @@
 		"style": {
 			"navigationBarTitleText": "假条管理"
 		}
+	},{
+		"path": "pages/work/ask_for_leave_request/index",
+		"style": {
+			"navigationBarTitleText": "请假申请"
+		}
 	}],
 	"tabBar": {
 		"color": "#000000",

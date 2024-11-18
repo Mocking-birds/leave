@@ -391,6 +391,7 @@
 			this.userInfo = res
 			console.log('leaveForm');
 			console.log(this.leaveForm);
+			console.log(res);
 		},
 		onLoad(params) {
 			this.id = params.id

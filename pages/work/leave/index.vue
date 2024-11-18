@@ -97,6 +97,7 @@
 			setTitle(item){
 				
 				console.log('title');
+				console.log(this.userInfo);
 				console.log(item);
 				
 				let first = ''

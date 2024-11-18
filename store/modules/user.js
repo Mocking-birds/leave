@@ -12,7 +12,8 @@ const user = {
     name: storage.get(constant.name),
     avatar: storage.get(constant.avatar),
     roles: storage.get(constant.roles),
-    permissions: storage.get(constant.permissions)
+    permissions: storage.get(constant.permissions),
+	dept: storage.get(constant.dept)
   },
 
   mutations: {
@@ -34,7 +35,11 @@ const user = {
     SET_PERMISSIONS: (state, permissions) => {
       state.permissions = permissions
       storage.set(constant.permissions, permissions)
-    }
+    },
+	SET_DEPT: (state, dept) => {
+	  state.dept = dept
+	  storage.set(constant.dept, dept)
+	}
   },
 
   actions: {
@@ -62,6 +67,7 @@ const user = {
           const user = res.user
           const avatar = (user == null || user.avatar == "" || user.avatar == null) ? require("@/static/images/profile.jpg") : baseUrl + user.avatar
           const username = (user == null || user.userName == "" || user.userName == null) ? "" : user.userName
+		  const dept = user.dept
           if (res.roles && res.roles.length > 0) {
             commit('SET_ROLES', res.roles)
             commit('SET_PERMISSIONS', res.permissions)
@@ -70,8 +76,10 @@ const user = {
           }
           commit('SET_NAME', username)
           commit('SET_AVATAR', avatar)
+		  commit('SET_DEPT', dept)
           resolve(res)
         }).catch(error => {
+			console.log('出错了');
           reject(error)
         })
       })
@@ -84,6 +92,7 @@ const user = {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           commit('SET_PERMISSIONS', [])
+		  commit('SET_DEPT', {})
           removeToken()
           storage.clean()
           resolve()
