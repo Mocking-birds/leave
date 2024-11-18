@@ -21,7 +21,7 @@
 			</uni-forms-item>
 			<uni-forms-item label="请假天数">
 				<view style="display: flex;align-items: center;width: 100%;height: 100%;">
-					{{comDays()}}天
+					{{leaveForm.permitDays}}天
 				</view>
 			</uni-forms-item>
 			<uni-forms-item label="是否销假" v-if="type != '请假'?true:false">
