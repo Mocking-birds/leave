@@ -46,8 +46,19 @@
 					console.log(res);
 					this.askForLeaveRequestList = res.rows
 					this.total = res.total
+				}else if(user.state.roles[0] == 'director'){
+					// 主任
+					const res = await listPermitByDept(this.params,user.state.dept.deptId,true)
+					console.log(res);
+					this.askForLeaveRequestList = res.rows
+					this.total = res.total
+				}else if(user.state.roles[0] == 'counsellor'){
+					// 辅导员
+					const res = await listPermitByDept(this.params,user.state.dept.parentId,false)
+					console.log(res);
+					this.askForLeaveRequestList = res.rows
+					this.total = res.total
 				}
-				// const res = await
 			},
 			//定义note
 			setNote(item){
@@ -61,8 +72,6 @@
 			setTitle(item){
 				
 				console.log('title');
-				console.log(this.userInfo);
-				console.log(item);
 				
 				let first = ''
 				let second = ''
@@ -91,7 +100,7 @@
 				console.log(this.userInfo);
 				if(index){
 					uni.navigateTo({
-						url: `/pages/work/ask_for_leave/index?id=${index}&type=假条管理&role=${user.state.roles[0]}`
+						url: `/pages/work/ask_for_leave/index?id=${index}&type=请假申请&role=${user.state.roles[0]}`
 					})
 				}
 			}

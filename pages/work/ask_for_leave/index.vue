@@ -1,8 +1,5 @@
 <template>
 	<view>
-		<!-- <uni-card :is-shadow="false" is-full>
-			<text class="leave-title">{{title}}假条</text>
-		</uni-card> -->
 		<uni-forms ref="forms" :modelValue="leaveForm" :rules="rules">
 			<uni-forms-item label="请假类型">
 				<uni-data-select v-model="leaveForm.permitType" :localdata="permitTypeList"
@@ -13,7 +10,7 @@
 			</uni-forms-item>
 			<uni-forms-item label="起始日期" name="startTime" required>
 				<uni-datetime-picker type="datetime" v-model="leaveForm.startTime"
-					:disabled="type != '请假' && role == 'student'?true:false" />
+					:disabled="type != '请假' && role == 'student'?true:false" @change="changeTime" />
 			</uni-forms-item>
 			<uni-forms-item label="结束日期" name="endTime" required>
 				<uni-datetime-picker type="datetime" v-model="leaveForm.endTime"
@@ -50,10 +47,9 @@
 					{{leaveForm.permitLocationList[0].locationName}}
 				</view>
 			</uni-forms-item>
-			<uni-forms-item label="销假位置" v-if="type != '请假'?true:false">
+			<uni-forms-item label="销假位置" v-if="type != '请假' && type != '请假申请'?true:false">
 				<view v-if="type == '销假'?true:false">
-					<button v-if="back"
-						@click="getLocation(1)">获取当前位置</button>
+					<button v-if="back" @click="getLocation(1)">获取当前位置</button>
 					<view v-else>
 						{{leaveForm.permitLocationList[1].locationName}}
 					</view>
@@ -65,8 +61,7 @@
 		</uni-forms>
 
 		<view>
-			<button type="primary" style="margin-bottom: 15px;"
-				@click="sureButton">{{type == '销假'?'销假请求':'确认'}}</button>
+			<button type="primary" style="margin-bottom: 15px;" @click="sureButton">{{buttonSure()}}</button>
 			<button type="warn" @click="cancelButton">取消</button>
 		</view>
 
@@ -133,7 +128,7 @@
 
 				//用户信息
 				userInfo: {},
-				
+
 				// 销假位置的显示状态
 				back: true,
 
@@ -223,82 +218,56 @@
 					// 	locationName: '',
 					// 	locationType: '1'
 					// }
-					
+
 					console.log('test');
 					console.log(this.leaveForm);
 				}
 
 			},
 
-			changeLog(e) {
-				console.log(e);
-			},
-
-			// 计算请假天数
-			comDays() {
-				if(this.type == '请假'){
-					// 判断非空
-					if (!this.leaveForm.startTime || !this.leaveForm.endTime) {
-						return 0;
-					}
-					
-					// 将日期字符串转换为Date对象  
-					const date1 = new Date(this.leaveForm.startTime);
-					const date2 = new Date(this.leaveForm.endTime);
-					
-					// 计算时间差（毫秒）  
-					const timeDifference = Math.abs(date2 - date1);
-					
-					// 将时间差转换为天数(向上取整)
-					const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-					
-					this.leaveForm.permitDays = daysDifference
-					
-					return daysDifference;
-				}else{
-					return this.leaveForm.permitDays;
-				}
-				
-			},
-
 			//取消
 			cancelButton() {
-				// 因为请假界面不是使用组件而是使用的是页面跳转，使用uni.navigateBack()的话会跳转到一个空界面
-				if(this.type == '请假'){
-					uni.switchTab({
-						url: '/pages/work/index'
-					})
-				}else{
-					uni.navigateBack()
-				}
+				uni.navigateBack()
 			},
 
 			//确认
 			async sureButton() {
-				
+
 				console.log('确认');
-				
+
 				console.log(this.leaveForm);
 
-				if (this.type == '请假'?!this.leaveForm.permitLocationList[0].locationName:(this.leaveForm.permitLocationList[1]== undefined?true:false)) {
+				if (this.type == '假条管理') {
+					const res = await updatePermit(this.leaveForm);
+					this.messageText = '编辑成功'
+					this.$refs.message.open()
+					uni.navigateBack()
+				} else if (this.type == '请假' || this.type == '请假申请' ? !this.leaveForm.permitLocationList[0]
+					.locationName : (this.leaveForm.permitLocationList[1] == undefined ? true : false)) {
 					this.msgLocationText = '请获取你的位置信息'
 					this.$refs.msgLocation.open()
 				} else {
 					try {
-						if(this.type == '请假'){
+						if (this.type == '请假') {
 							this.leaveForm.permitTime = this.getCurrentTime()
-						}else{
+						} else {
 							this.leaveForm.backTime = this.getCurrentTime()
 						}
-						
+
 						await this.$refs.forms.validate()
-						
+
 						if (this.type == '请假') {
 							const res = await addPermit(this.leaveForm);
 							console.log('添加');
 							console.log(res);
 							this.messageText = '添加成功'
-						} else{
+						} else {
+							if (this.type == '请假申请') {
+								this.leaveForm.leaveStatus = '1'
+							}
+							if (this.type == '销假申请') {
+								this.leaveForm.isBack = '1'
+							}
 							const res = await updatePermit(this.leaveForm);
 							console.log('更新');
 							console.log(res);
@@ -342,7 +311,7 @@
 				uni.getLocation({
 					type: 'gcj02', //返回可以用于uni.openLocation的经纬度
 					success: (res) => {
-						if(!this.leaveForm.permitLocationList[num]){
+						if (!this.leaveForm.permitLocationList[num]) {
 							this.leaveForm.permitLocationList[num] = {}
 						}
 						this.leaveForm.permitLocationList[num].latitude = res.latitude
@@ -368,12 +337,12 @@
 									.address
 								this.leaveForm.permitLocationList[num].locationType = num
 
-								if(num!=0){
+								if (num != 0) {
 									this.back = false
 								}
 								console.log('成功');
 								console.log(!(this.leaveForm.permitLocationList[num]
-								.locationName));
+									.locationName));
 							},
 							fail: (res) => {
 								console.log(res);
@@ -384,6 +353,31 @@
 						console.log(res);
 					}
 				});
+			},
+
+			// button显示
+			buttonSure() {
+				if (this.type == '请假申请' || this.type == '销假申请') {
+					return '通过'
+				} else {
+					return '确认'
+				}
+			},
+
+			// 时间发生改变
+			changeTime() {
+				console.log('时间改变')
+				console.log(this.leaveForm)
+
+				// 将日期字符串转换为Date对象
+				const date1Obj = new Date(this.leaveForm.startTime);
+				const date2Obj = new Date(this.leaveForm.endTime);
+
+				// 计算时间差（毫秒）
+				const timeDifference = Math.abs(date2Obj - date1Obj);
+
+				// 将时间差转换为天数
+				this.leaveForm.permitDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
 			}
 		},
 		async created() {
