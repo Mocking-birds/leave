@@ -218,17 +218,21 @@
         <el-form-item label="起始日期" prop="startTime">
           <el-date-picker clearable
             v-model="form.startTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择起始日期">
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="请选择起始日期"
+            @change="changeTime"
+          >
           </el-date-picker>
         </el-form-item>
         <el-form-item label="结束日期" prop="endTime">
           <el-date-picker clearable
             v-model="form.endTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择结束日期">
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="请选择结束日期"
+            @change="changeTime"
+          >
           </el-date-picker>
         </el-form-item>
         <el-form-item label="是否销假" prop="isBack">
@@ -370,14 +374,14 @@ export default {
 
       if(user.state.roles[0] == 'counsellor'){
         // 辅导员
-        const res = await listPermitByDept({pageNum: this.queryParams.pageNum, pageSize: this.queryParams.pageSize},user.state.dept.parentId,'','','')
+        const res = await listPermitByDept({pageNum: this.queryParams.pageNum, pageSize: this.queryParams.pageSize},user.state.dept.parentId,'')
         console.log('辅导员')
         console.log(res)
         this.permitList = res.rows
         this.total = res.total
       }else if(user.state.roles[0] == 'director'){
         // 系主任
-        const res = await listPermitByDept({pageNum: this.queryParams.pageNum, pageSize: this.queryParams.pageSize},user.state.dept.deptId,'','','')
+        const res = await listPermitByDept({pageNum: this.queryParams.pageNum, pageSize: this.queryParams.pageSize},user.state.dept.deptId,'')
         console.log('系主任')
         console.log(res)
         this.permitList = res.rows
@@ -513,6 +517,21 @@ export default {
       this.download('permit/permit/export', {
         ...this.queryParams
       }, `permit_${new Date().getTime()}.xlsx`)
+    },
+    // 当时间改变时修改请假天数
+    changeTime(){
+      console.log('时间改变')
+      console.log(this.form)
+
+      // 将日期字符串转换为Date对象
+      const date1Obj = new Date(this.form.startTime);
+      const date2Obj = new Date(this.form.endTime);
+
+      // 计算时间差（毫秒）
+      const timeDifference = Math.abs(date2Obj - date1Obj);
+
+      // 将时间差转换为天数
+      this.form.permitDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
     }
   }
 };
