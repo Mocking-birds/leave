@@ -35,27 +35,49 @@
 				<uni-datetime-picker type="datetime" v-model="leaveForm.backTime"
 					:disabled="role == 'student'?true:false" />
 			</uni-forms-item>
-			<uni-forms-item label="请假位置">
-				<view v-if="type == '请假'?true:false">
-					<button v-if="!(leaveForm.permitLocationList[0].locationName)"
-						@click="getLocation(0)">获取当前位置</button>
-					<view v-else>
-						{{leaveForm.permitLocationList[0].locationName}}
+			<view class="row">
+				<uni-forms-item label="请假位置">
+					<view v-if="type == '请假'?true:false">
+						<button v-if="!(leaveForm.permitLocationList[0].locationName)"
+							@click="getLocation(0)">获取当前位置</button>
+						<view v-else class="row-location" @click="locationClick(0)">
+							<uni-icons type="location" size="25"></uni-icons>
+							<view>
+								{{leaveForm.permitLocationList[0].locationName}}
+							</view>
+							<uni-icons type="forward" size="16" color="#bbb" style="position: absolute;right: 0;"></uni-icons>
+						</view>
 					</view>
-				</view>
-				<view v-else>
-					{{leaveForm.permitLocationList[0].locationName}}
-				</view>
-			</uni-forms-item>
+					<view v-else>
+						<view class="row-location" @click="locationClick(0)">
+							<uni-icons type="location" size="25"></uni-icons>
+							<view>
+								{{leaveForm.permitLocationList[0].locationName}}
+							</view>
+							<uni-icons type="forward" size="16" color="#bbb" style="position: absolute;right: 0;"></uni-icons>
+						</view>
+					</view>
+				</uni-forms-item>
+			</view>
 			<uni-forms-item label="销假位置" v-if="type != '请假' && type != '请假申请'?true:false">
 				<view v-if="type == '销假'?true:false">
 					<button v-if="back" @click="getLocation(1)">获取当前位置</button>
-					<view v-else>
-						{{leaveForm.permitLocationList[1].locationName}}
+					<view v-else class="row-location" @click="locationClick(1)">
+						<uni-icons type="location" size="25"></uni-icons>
+						<view>
+							{{leaveForm.permitLocationList[1].locationName}}
+						</view>
+						<uni-icons type="forward" size="16" color="#bbb" style="position: absolute;right: 0;"></uni-icons>
 					</view>
 				</view>
 				<view v-else>
-					{{leaveForm.permitLocationList[1].locationName}}
+					<view class="row-location" @click="locationClick(1)">
+						<uni-icons type="location" size="25"></uni-icons>
+						<view>
+							{{leaveForm.permitLocationList[1].locationName}}
+						</view>
+						<uni-icons type="forward" size="16" color="#bbb" style="position: absolute;right: 0;"></uni-icons>
+					</view>
 				</view>
 			</uni-forms-item>
 		</uni-forms>
@@ -382,6 +404,41 @@
 					this.leaveForm.permitDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
 				}
 
+			},
+			locationClick(id) {
+				console.log(123);
+				console.log(this.leaveForm);
+				console.log(id);
+				
+				uni.openLocation({
+					latitude:Number(this.leaveForm.permitLocationList[id].latitude),
+					longitude:Number(this.leaveForm.permitLocationList[id].longitude),
+					success: () => {
+						console.log('success');
+					},
+					fail:(res) => {
+						console.log(res);
+					}
+				})
+			
+				// uni.getLocation({
+				// 	type: 'gcj02', //返回可以用于uni.openLocation的经纬度
+				// 	success: (res) => {
+				// 		console.log(res);
+				// 		this.latitude = res.latitude;
+				// 		this.longitude = res.longitude;
+				// 		uni.openLocation({
+				// 			latitude: this.latitude,
+				// 			longitude: this.longitude,
+				// 			success: function() {
+				// 				console.log('success');
+				// 			}
+				// 		});
+				// 	},
+				// 	fail: (res) => {
+				// 		console.log(res);
+				// 	}
+				// });
 			}
 		},
 		async created() {
@@ -449,5 +506,28 @@
 
 	.uni-date-editor--x__disabled {
 		opacity: 0.8 !important;
+	}
+	
+	.row-location{
+		width: 308px;
+		height: 36px;
+		display: flex;
+		position: relative;
+		align-items: center;
+	}
+	.row{
+		padding-bottom: 10px;
+	}
+	.row>.uni-forms-item{
+		padding:5px 0;
+		display: flex;
+		align-items: center;
+		border-top: 1px solid #e5e5e5;
+		border-bottom: 1px solid #e5e5e5;
+	}
+	
+	.uniui-location{
+		color: #2196f3 !important;
+		margin-right: 5px;
 	}
 </style>
