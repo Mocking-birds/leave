@@ -273,10 +273,10 @@
 							console.log(res);
 							this.messageText = '编辑成功'
 						}
-
+						this.getData()
 						this.$refs.message.open()
 						uni.navigateBack()
-						this.getData()
+						
 					} catch (e) {
 						//TODO handle the exception
 						console.log(e);
