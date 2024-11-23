@@ -14,7 +14,7 @@
 			</uni-forms-item>
 			<uni-forms-item label="结束日期" name="endTime" required>
 				<uni-datetime-picker type="datetime" v-model="leaveForm.endTime"
-					:disabled="type != '请假' && role == 'student'?true:false" />
+					:disabled="type != '请假' && role == 'student'?true:false" @change="changeTime"/>
 			</uni-forms-item>
 			<uni-forms-item label="请假天数">
 				<view style="display: flex;align-items: center;width: 100%;height: 100%;">
@@ -276,6 +276,7 @@
 
 						this.$refs.message.open()
 						uni.navigateBack()
+						this.getData()
 					} catch (e) {
 						//TODO handle the exception
 						console.log(e);
@@ -368,16 +369,19 @@
 			changeTime() {
 				console.log('时间改变')
 				console.log(this.leaveForm)
+				// 非空判断
+				if(this.leaveForm.startTime != '' && this.leaveForm.endTime != ''){
+					// 将日期字符串转换为Date对象
+					const date1Obj = new Date(this.leaveForm.startTime);
+					const date2Obj = new Date(this.leaveForm.endTime);
+					
+					// 计算时间差（毫秒）
+					const timeDifference = Math.abs(date2Obj - date1Obj);
+					
+					// 将时间差转换为天数
+					this.leaveForm.permitDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+				}
 
-				// 将日期字符串转换为Date对象
-				const date1Obj = new Date(this.leaveForm.startTime);
-				const date2Obj = new Date(this.leaveForm.endTime);
-
-				// 计算时间差（毫秒）
-				const timeDifference = Math.abs(date2Obj - date1Obj);
-
-				// 将时间差转换为天数
-				this.leaveForm.permitDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
 			}
 		},
 		async created() {

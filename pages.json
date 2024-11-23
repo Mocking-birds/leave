@@ -118,6 +118,11 @@
 		"style": {
 			"navigationBarTitleText": "请假申请"
 		}
+	},{
+		"path": "pages/work/back_for_leave_request/index",
+		"style": {
+			"navigationBarTitleText": "销假申请"
+		}
 	}],
 	"tabBar": {
 		"color": "#000000",
