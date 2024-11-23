@@ -14,7 +14,7 @@
 		</swiper>
 
 		<uni-notice-bar :scrollable="true" :single="true" :showIcon="true" :speed="100"
-			text="uni-app 版正式发布，开发一次，同时发布iOS、Android、H5、微信小程序、支付宝小程序、百度小程序、头条小程序等7大平台。"></uni-notice-bar>
+			:text="text"></uni-notice-bar>
 
 		<uni-card :is-shadow="false">
 			<ec-canvas id="mychart-bar" canvas-id="mychart-bar" :ec="ec"></ec-canvas>
@@ -25,6 +25,7 @@
 
 <script>
 	import * as echarts from '@/wxcomponents/ec-canvas/echarts.js'
+	import {getNoticeList} from '@/api/system/notice.js'
 
 	export default {
 		data() {
@@ -32,10 +33,17 @@
 				ec: {
 					onInit: this.initChart
 				},
+				text: ''
 
 			}
 		},
 		methods: {
+			// 获取数据
+			async getData(){
+				const res = await getNoticeList({pageNum:1,pageSize:10})
+				console.log(res);
+				this.text = res.rows[0].noticeTitle
+			},
 			initChart(canvas, width, height, dpr) {
 				console.log(canvas, width, height, dpr);
 				const chart = echarts.init(canvas, null, {
@@ -110,6 +118,9 @@
 			console.log(ecComponent);
 			// this.initChart(ecComponent,100,100,1)
 			console.log(this.ec);
+		},
+		created(){
+			this.getData()
 		},
 		onShareAppMessage() {
 		    return {
