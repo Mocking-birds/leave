@@ -5,6 +5,8 @@ import com.leave.permit.domain.PermitLeave;
 import com.leave.permit.domain.vo.PermitLeaveBack;
 import com.leave.permit.domain.PermitLocation;
 import com.leave.permit.domain.vo.PermitLeaveDept;
+import com.leave.permit.domain.vo.PermitLeaveDeptIds;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 假条信息Mapper接口
@@ -54,6 +56,15 @@ public interface PermitLeaveMapper
      */
     public List<PermitLeave> selectPermitLeaveList(PermitLeave permitLeave);
 
+    /**
+     * 查询假条信息列表(ids组)
+     *
+     * @param permitLeave,deptIds
+     * @return 假条信息集合
+     */
+    public List<PermitLeave> selectPermitLeaveByDeptIds(@Param("permitLeave") PermitLeave permitLeave, @Param("deptIds") Long[] deptIds);
+
+//    public List<PermitLeave> selectPermitLeaveByDeptIds(PermitLeave permitLeave);
     /**
      * 新增假条信息
      * 

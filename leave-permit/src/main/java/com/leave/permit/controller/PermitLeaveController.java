@@ -1,19 +1,14 @@
 package com.leave.permit.controller;
 
-import java.util.List;
+import java.util.*;
 import javax.servlet.http.HttpServletResponse;
 
 import com.leave.permit.domain.vo.PermitLeaveDept;
+import com.leave.permit.domain.vo.PermitLeaveDeptIds;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.leave.common.annotation.Log;
 import com.leave.common.core.controller.BaseController;
 import com.leave.common.core.domain.AjaxResult;
@@ -48,6 +43,50 @@ public class PermitLeaveController extends BaseController
         List<PermitLeave> list = permitLeaveService.selectPermitLeaveList(permitLeave);
         return getDataTable(list);
     }
+
+    /**
+     * 查询假条信息列表（部门ids组）
+     */
+    @PreAuthorize("@ss.hasPermi('permit:permit:list')")
+    @PostMapping("/list/deptIds")
+    public TableDataInfo listByIds(@RequestBody PermitLeaveDeptIds permitLeaveDeptIds){
+        // 非空判断
+        if(permitLeaveDeptIds.getPermitLeave() == null && permitLeaveDeptIds.getPermitLeave().getLeaveStatus() == null && permitLeaveDeptIds.getPermitLeave().getIsBack() == null){
+            return  null;
+        }
+        List<PermitLeave> list = permitLeaveService.selectPermitLeaveByDeptIds(permitLeaveDeptIds);
+        Map<Long,List<PermitLeave>> map = new HashMap<>();
+        for(Long deptId : permitLeaveDeptIds.getDeptIds()){
+            map.put(deptId, new ArrayList<PermitLeave>());
+        }
+        System.out.println("list:"+list);
+        for(PermitLeave permitLeave : list){
+            if (map.containsKey(permitLeave.getUser().getDept().getParentId())){
+                map.get(permitLeave.getUser().getDept().getParentId()).add(permitLeave);
+            }
+        }
+
+        List<List<PermitLeave>> res = new ArrayList<>(map.values());
+
+        return getDataTable(res);
+    }
+//    public TableDataInfo list(@RequestParam Long[] deptIds){
+//        List<PermitLeave> list = permitLeaveService.selectPermitLeaveByDeptIds(deptIds);
+//        Map<Long,List<PermitLeave>> map = new HashMap<>();
+//        for (long deptId : deptIds){
+//            map.put(deptId, new ArrayList<PermitLeave>());
+//        }
+//        for (PermitLeave permitLeave : list){
+//            System.out.println(permitLeave.getUser().getDept().getParentId());
+//            if(map.containsKey(permitLeave.getUser().getDept().getParentId())){
+//                map.get(permitLeave.getUser().getDept().getParentId()).add(permitLeave);
+//            }
+//        }
+//
+//        List<List<PermitLeave>> res = new ArrayList<>(map.values());
+//        System.out.println(res);
+//        return getDataTable(res);
+//    }
 
     /**
      * 查询假条信息列表(用户id)

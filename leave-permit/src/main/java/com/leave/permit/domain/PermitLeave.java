@@ -36,6 +36,10 @@ public class PermitLeave extends BaseEntity
     @Excel(name = "请假理由")
     private String reason;
 
+    /** 岗位id */
+    @Excel(name = "岗位id")
+    private Long deptId;
+
     /** 请假天数 */
     @Excel(name = "请假天数")
     private Long permitDays;
@@ -83,7 +87,15 @@ public class PermitLeave extends BaseEntity
         this.leaveId = leaveId;
     }
 
-    public Long getLeaveId() 
+    public Long getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
+    }
+
+    public Long getLeaveId()
     {
         return leaveId;
     }

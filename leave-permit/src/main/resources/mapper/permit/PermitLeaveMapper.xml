@@ -27,6 +27,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="PermitLeaveDept" id="PermitLeaveDeptResult">
         <result property="deptId"    column="dept_id"    />
+        <result property="isBack" column="is_back"/>
+        <result property="leaveStatus" column="leave_status"/>
         <result property="specialConditions"    column="special_conditions"     />
     </resultMap>
 
@@ -87,6 +89,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         ORDER BY
         p.create_time DESC
+    </select>
+
+    <select id="selectPermitLeaveByDeptIds" parameterType="PermitLeave" resultMap="PermitLeaveResult">
+        <include refid="selectPermitLeaveVo"/>
+        where 1=1
+<!--        <if test="permitLeave != null">-->
+<!--            and leave_status = #{permitLeave.leaveStatus}-->
+<!--            and is_back = #{permitLeave.isBack}-->
+<!--        </if>-->
+        <if test="permitLeave.leaveStatus != null  and permitLeave.leaveStatus != ''"> and leave_status = #{permitLeave.leaveStatus}</if>
+        <if test="permitLeave.isBack != null  and permitLeave.isBack != ''"> and is_back = #{permitLeave.isBack}</if>
+        AND d.parent_id IN
+        <foreach item="deptId" collection="deptIds" open="(" separator="," close=")">
+            #{deptId}
+        </foreach>
     </select>
     
     <select id="selectPermitLeaveByLeaveId" parameterType="Long" resultMap="PermitLeavePermitLocationResult">

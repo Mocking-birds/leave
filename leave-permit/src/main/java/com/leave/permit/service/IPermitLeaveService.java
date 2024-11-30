@@ -4,6 +4,7 @@ import java.util.List;
 import com.leave.permit.domain.PermitLeave;
 import com.leave.permit.domain.vo.PermitLeaveBack;
 import com.leave.permit.domain.vo.PermitLeaveDept;
+import com.leave.permit.domain.vo.PermitLeaveDeptIds;
 
 /**
  * 假条信息Service接口
@@ -28,6 +29,14 @@ public interface IPermitLeaveService
      * @return 假条信息集合
      */
     public List<PermitLeave> selectPermitLeaveList(PermitLeave permitLeave);
+
+    /**
+     * 查询假条信息列表（部门ids组）
+     *
+     * @param permitLeaveDeptIds 假条信息
+     * @return 假条信息集合
+     */
+    public List<PermitLeave> selectPermitLeaveByDeptIds(PermitLeaveDeptIds permitLeaveDeptIds);
 
     /**
      * 查询假条信息列表

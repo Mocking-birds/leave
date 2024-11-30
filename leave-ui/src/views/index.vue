@@ -98,7 +98,6 @@ export default {
 
       // 再次获取请假列表（将pageSize改为total）
       const askForLeaveRes = await listPermit({pageNum: this.pageNum,pageSize: res.total})
-      console.log(askForLeaveRes)
 
       this.askForLeaveList = askForLeaveRes.rows
       this.askForLeaveTotal = askForLeaveRes.total
@@ -109,11 +108,9 @@ export default {
 
       // 获取销假总数(默认pageNum:1,pageSize:10)
       const res1 = await listBackPermit({pageNum:this.pageNum,pageSize: this.pageSize},null,'1')
-      console.log(res1)
 
       // 再次获取销假列表（将pageSize改为total）
       const BackForLeaveRes = await listBackPermit({pageNum: this.pageNum,pageSize: res1.total},null,'1')
-      console.log(BackForLeaveRes)
 
       this.backForLeaveList = BackForLeaveRes.rows
       this.backForLeaveTotal = BackForLeaveRes.total
@@ -137,8 +134,6 @@ export default {
         );
       });
 
-      console.log(filteredData)
-
       this.dayAskForLeaveTotal = filteredData.length
 
       // ---------------------------------------------------
@@ -153,7 +148,6 @@ export default {
         );
       });
 
-      console.log(filteredData1)
 
       this.dayBackForLeaveTotal = filteredData1.length
 
@@ -190,8 +184,6 @@ export default {
 
       // 遍历接口返回的数据
       this.backForLeaveList.forEach(item => {
-        console.log('item')
-        console.log(item)
         let itemDate = new Date(item.backTime);
         let itemYear = itemDate.getFullYear();
         let itemMonth = itemDate.getMonth() + 1; // 月份从0开始，需要加1
@@ -211,11 +203,6 @@ export default {
     },
 
     getCalendarOne(year,month,day,type){
-      console.log('get')
-      console.log(year)
-      console.log(month)
-      console.log(day)
-      console.log(type)
       if(type == 'askForLeave'){
         let data = this.askForLeaveList.filter(item => {
           const itemDate = new Date(item.permitTime);
@@ -225,7 +212,6 @@ export default {
             itemDate.getDate() === day
           );
         });
-        console.log(data)
         return data.length
       }else{
         let data = this.backForLeaveList.filter(item => {
@@ -236,13 +222,13 @@ export default {
             itemDate.getDate() === day
           );
         });
-        console.log(data)
         return data.length
       }
     },
 
     // 初始化饼状图
     initPieChart(){
+      console.log('饼状图')
       console.log(this.$refs.pieChart)
       let pieChart = echarts.init(this.$refs.pieChart)
       // 指定图表的配置项和数据
@@ -304,8 +290,6 @@ export default {
       function getVirtualData() {
         const date = +echarts.time.parse(currentYear+'-'+currentMonth+'-01');
         const end = +echarts.time.parse(currentYear+'-'+(currentMonth+1)+'-01');
-        console.log(date)
-        console.log(end)
         const dayTime = 3600 * 24 * 1000;
         const data = [];
         for (let time = date; time < end; time += dayTime) {
@@ -386,7 +370,8 @@ export default {
   },
   async created() {
     await this.getData()
-
+    console.log("this")
+    console.log(this)
     this.initPieChart()
 
     this.initCalendarPieChart()
