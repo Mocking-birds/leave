@@ -15,7 +15,7 @@
 			"navigationBarTitleText": "若依移动端框架",
 			"navigationStyle": "custom",
 			"usingComponents": {
-				"ec-canvas": "/wxcomponents/ec-canvas/ec-canvas"
+				"ec-canvas": "../wxcomponents/ec-canvas/ec-canvas"
 			}
 		}
 	}, {
