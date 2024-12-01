@@ -66,7 +66,16 @@ public class PermitLeaveServiceImpl implements IPermitLeaveService
     {
         PermitLeave permitLeave = permitLeaveDeptIds.getPermitLeave();
         Long[] deptIds = permitLeaveDeptIds.getDeptIds();
-        return permitLeaveMapper.selectPermitLeaveByDeptIds(permitLeave,deptIds);
+        String roleName = permitLeaveDeptIds.getRoleName();
+        System.out.println("roleName:" + roleName);
+        if(roleName.equals("admin")){
+            return permitLeaveMapper.selectPermitLeaveByDeptIdsAdmin(permitLeave,deptIds);
+        } else if (roleName.equals("director")) {
+            return permitLeaveMapper.selectPermitLeaveByDeptIdsDirector(permitLeave,deptIds);
+        }else {
+            return null;
+        }
+
     }
 
     /**

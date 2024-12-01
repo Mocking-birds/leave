@@ -336,7 +336,7 @@ export default {
             fontSize: 25
           },
           dayLabel: {
-            margin: 15,
+            margin: 5,
             firstDay: 1,
             nameMap: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
           },

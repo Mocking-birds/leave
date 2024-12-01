@@ -62,9 +62,9 @@ public interface PermitLeaveMapper
      * @param permitLeave,deptIds
      * @return 假条信息集合
      */
-    public List<PermitLeave> selectPermitLeaveByDeptIds(@Param("permitLeave") PermitLeave permitLeave, @Param("deptIds") Long[] deptIds);
+    public List<PermitLeave> selectPermitLeaveByDeptIdsAdmin(@Param("permitLeave") PermitLeave permitLeave, @Param("deptIds") Long[] deptIds);
 
-//    public List<PermitLeave> selectPermitLeaveByDeptIds(PermitLeave permitLeave);
+    public List<PermitLeave> selectPermitLeaveByDeptIdsDirector(@Param("permitLeave") PermitLeave permitLeave, @Param("deptIds") Long[] deptIds);
     /**
      * 新增假条信息
      * 

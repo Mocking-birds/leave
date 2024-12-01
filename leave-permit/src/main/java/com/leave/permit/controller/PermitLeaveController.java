@@ -59,12 +59,27 @@ public class PermitLeaveController extends BaseController
         for(Long deptId : permitLeaveDeptIds.getDeptIds()){
             map.put(deptId, new ArrayList<PermitLeave>());
         }
-        System.out.println("list:"+list);
-        for(PermitLeave permitLeave : list){
-            if (map.containsKey(permitLeave.getUser().getDept().getParentId())){
-                map.get(permitLeave.getUser().getDept().getParentId()).add(permitLeave);
+//        System.out.println("list:"+list);
+        
+        String roleName = permitLeaveDeptIds.getRoleName();
+
+        System.out.println("roleName:"+roleName);
+        System.out.println("系主任："+roleName.equals("director"));
+        
+        if(roleName.equals("admin")){
+            for(PermitLeave permitLeave : list){
+                if (map.containsKey(permitLeave.getUser().getDept().getParentId())){
+                    map.get(permitLeave.getUser().getDept().getParentId()).add(permitLeave);
+                }
+            }
+        } else if (roleName.equals("director")) {
+            for(PermitLeave permitLeave : list){
+                if (map.containsKey(permitLeave.getUser().getDeptId())){
+                    map.get(permitLeave.getUser().getDeptId()).add(permitLeave);
+                }
             }
         }
+
 
         List<List<PermitLeave>> res = new ArrayList<>(map.values());
 

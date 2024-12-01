@@ -6,6 +6,15 @@ import com.leave.permit.domain.PermitLeave;
 public class PermitLeaveDeptIds extends BaseEntity {
     private PermitLeave permitLeave;
     private Long[] deptIds;
+    private String roleName;
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
 
     public PermitLeaveDeptIds() {
     }
