@@ -83,7 +83,8 @@ public class PermitLeaveController extends BaseController
 
         List<List<PermitLeave>> res = new ArrayList<>(map.values());
 
-        return getDataTable(res);
+
+       return getDataTable(res);
     }
 //    public TableDataInfo list(@RequestParam Long[] deptIds){
 //        List<PermitLeave> list = permitLeaveService.selectPermitLeaveByDeptIds(deptIds);

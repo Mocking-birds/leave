@@ -86,6 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="permitTime != null "> and permit_time = #{permitTime}</if>
             <if test="backTime != null "> and back_time = #{backTime}</if>
             <if test="permitDays != null "> and permit_days = #{permitDays}</if>
+            <if test="userId != null and userId != ''">and p.user_id = #{userId}</if>
         </where>
         ORDER BY
         p.create_time DESC
