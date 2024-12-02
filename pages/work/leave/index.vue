@@ -52,6 +52,7 @@
 					this.total = res.total
 				} else if (user.state.roles[0] == 'director') {
 					// 系主任
+					// console.log(this);
 					const res = await listPermitByDept({pageNum: this.params.pageNum, pageSize: this.params.pageSize},user.state.dept.deptId,'')
 					console.log(res);
 					this.askForLeaveList = res.rows

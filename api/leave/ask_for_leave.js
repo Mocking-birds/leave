@@ -10,7 +10,7 @@ export function listPermit(query) {
 }
 
 // 查询假条信息（dept By ids）
-export function listPermitByDeptIds(query,deptIds){
+export function listPermitByDeptIds(query,deptIds,roleName){
 	return request({
 		url: '/permit/permit/list/deptIds',
 		method: 'post',
@@ -19,7 +19,8 @@ export function listPermitByDeptIds(query,deptIds){
 				leaveStatus: query.leaveStatus,
 				isBack: query.isBack
 			},
-			deptIds: deptIds
+			deptIds: deptIds,
+			roleName: roleName
 		}
 	})
 }
