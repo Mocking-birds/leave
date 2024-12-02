@@ -5,8 +5,8 @@
         <slot v-else name="decoration"></slot>
 
         <view class="uni-section-header__content">
+			 <text v-if="subTitle" :style="{'font-size':subTitleFontSize,'color':subTitleColor}" class="uni-section-header__content-sub">{{ subTitle }}</text>
           <text :style="{'font-size':titleFontSize,'color':titleColor}" class="uni-section__content-title" :class="{'distraction':!subTitle}">{{ title }}</text>
-          <text v-if="subTitle" :style="{'font-size':subTitleFontSize,'color':subTitleColor}" class="uni-section-header__content-sub">{{ subTitle }}</text>
         </view>
 
         <view class="uni-section-header__slot-right">
@@ -103,7 +103,6 @@
 	$uni-primary: #2979ff !default;
 
 	.uni-section {
-		background-color: #fff;
     .uni-section-header {
       position: relative;
       /* #ifndef APP-NVUE */
