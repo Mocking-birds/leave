@@ -117,6 +117,17 @@ public class PermitLeaveController extends BaseController
     }
 
     /**
+     * 查询待办假条信息列表
+     */
+    @PreAuthorize("@ss.hasPermi('permit:permit:query')")
+    @GetMapping("/list/backlog")
+    public TableDataInfo listBacklog(PermitLeaveDept permitLeaveDept){
+        startPage();
+        List<PermitLeave> list = permitLeaveService.selectPermitLeaveListBackLog(permitLeaveDept);
+        return getDataTable(list);
+    }
+
+    /**
      * 查询假条信息列表(用户id,是否销假)
      */
     @PreAuthorize("@ss.hasPermi('permit:permit:query')")

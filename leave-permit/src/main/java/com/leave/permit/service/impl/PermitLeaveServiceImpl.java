@@ -79,6 +79,15 @@ public class PermitLeaveServiceImpl implements IPermitLeaveService
     }
 
     /**
+     * 查询待办假条信息列表
+     * @return 待办假条信息列表
+     */
+    @Override
+    public List<PermitLeave> selectPermitLeaveListBackLog(PermitLeaveDept permitLeaveDept){
+        return permitLeaveMapper.selectPermitLeaveListBackLog(permitLeaveDept);
+    }
+
+    /**
      * 查询假条信息列表
      *
      * @param userId 用户id

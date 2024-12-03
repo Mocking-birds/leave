@@ -65,6 +65,13 @@ public interface PermitLeaveMapper
     public List<PermitLeave> selectPermitLeaveByDeptIdsAdmin(@Param("permitLeave") PermitLeave permitLeave, @Param("deptIds") Long[] deptIds);
 
     public List<PermitLeave> selectPermitLeaveByDeptIdsDirector(@Param("permitLeave") PermitLeave permitLeave, @Param("deptIds") Long[] deptIds);
+
+    /**
+     * 查询待办假条信息列表
+     * @return 待办假条信息集合
+     */
+    public List<PermitLeave> selectPermitLeaveListBackLog(PermitLeaveDept permitLeaveDept);
+
     /**
      * 新增假条信息
      * 

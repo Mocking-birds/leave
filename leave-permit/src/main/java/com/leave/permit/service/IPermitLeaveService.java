@@ -39,6 +39,13 @@ public interface IPermitLeaveService
     public List<PermitLeave> selectPermitLeaveByDeptIds(PermitLeaveDeptIds permitLeaveDeptIds);
 
     /**
+     * 查询待办假条信息列表
+     * @param permitLeaveDept
+     * @return 待办假条信息集合
+     */
+    public List<PermitLeave> selectPermitLeaveListBackLog(PermitLeaveDept permitLeaveDept);
+
+    /**
      * 查询假条信息列表
      *
      * @param userId 用户id

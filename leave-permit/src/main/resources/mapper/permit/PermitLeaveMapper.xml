@@ -92,6 +92,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         p.create_time DESC
     </select>
 
+    <select id="selectPermitLeaveListBackLog" parameterType="PermitLeaveDept" resultMap="PermitLeaveResult">
+        <include refid="selectPermitLeaveVo"/>
+        where
+            (leave_status = '0'
+            OR is_back = '2')
+        <if test="deptId != null and deptId != ''">and d.parent_id = #{deptId}</if>
+    </select>
+
     <select id="selectPermitLeaveByDeptIdsAdmin" parameterType="PermitLeave" resultMap="PermitLeaveResult">
         <include refid="selectPermitLeaveVo"/>
         where 1=1
