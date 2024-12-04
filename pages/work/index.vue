@@ -22,6 +22,7 @@
 			</view>
 			<view class="card card_student card_title" v-else>
 				<view class="card_student_buttons">
+					<button class="card_student_button" size="default" @click="request('假条列表')">假条列表</button>
 					<button class="card_student_button" size="default" @click="request('请假')">请假申请</button>
 					<button class="card_student_button" size="default" @click="request('销假')">销假申请</button>
 				</view>
@@ -113,10 +114,16 @@
 			changeGrid(e) {
 				console.log(e);
 				console.log(this.gridList);
-				if (this.gridList[e.detail.index].name == "Ask_for_leave") {
+				console.log(this.gridList[e.detail.index]);
+				if (this.gridList[e.detail.index].name == "Back_for_leave_request") {
 					uni.navigateTo({
 						url: '/' + this.gridList[e.detail.index].component +
-							`?type=请假&role=${this.userInfo.roles[0]}`
+							`?type=销假申请`
+					})
+				} else if(this.gridList[e.detail.index].name == "Ask_for_leave_request"){
+					uni.navigateTo({
+						url: '/' + this.gridList[e.detail.index].component +
+							`?type=请假申请`
 					})
 				} else {
 					uni.navigateTo({
@@ -126,9 +133,16 @@
 			},
 			// 请销假
 			request(type){
-				uni.navigateTo({
-					url: `/pages/work/request/index?type=${type}`
-				})
+				if(type == '请假'){
+					uni.navigateTo({
+						url: `/pages/work/request/index?type=${type}`
+					})
+				}else if(type == '销假' || type == '假条列表'){
+					uni.navigateTo({
+						url: `/pages/work/leave_list/index?type=${type}`
+					})
+				}
+				
 			},
 			// 获取权限路由
 			async getGrid() {
@@ -351,7 +365,7 @@
 		top:42%;
 		font-size: 25px;
 		font-weight: 600;
-		color:#ebe525
+		color:#f4a042
 	}
 
 	.user_name_create_time .uni-section-header {

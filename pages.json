@@ -104,27 +104,9 @@
 			"navigationBarTitleText": "假条管理"
 		}
 	}, {
-		"path": "pages/work/ask_for_leave/index",
-		"style": {
-			"navigationBarTitleText": "假条管理"
-		}
-	}, {
-		"path": "pages/work/back_for_leave/index",
-		"style": {
-			"navigationBarTitleText": "假条管理"
-		}
-	},{
-		"path": "pages/work/ask_for_leave_request/index",
-		"style": {
-			"navigationBarTitleText": "请假申请"
-		}
-	},{
-		"path": "pages/work/back_for_leave_request/index",
-		"style": {
-			"navigationBarTitleText": "销假申请"
-		}
-	},{
 		"path": "pages/work/request/index"
+	},{
+		"path": "pages/work/leave_list/index"
 	}],
 	"tabBar": {
 		"color": "#000000",

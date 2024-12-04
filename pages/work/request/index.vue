@@ -4,7 +4,6 @@
 		scroll-top="0"
 		enable-flex="true" 
 		lower-threshold="50" 
-		@scrolltolower="scrolltolower"
 		>
 		<view class="header-section">
 		</view>
@@ -76,14 +75,15 @@
 				type: ''
 			}
 		},
+		created(){
+			console.log('created');
+		},
+		onLoad(params){
+			console.log('onLoad');
+			this.type = params.type
+		},
 		methods:{
-			created(){
-				console.log('created');
-			},
-			onLoad(params){
-				console.log('onLoad');
-				this.type = params.type
-			}
+			
 		}
 	}
 </script>
