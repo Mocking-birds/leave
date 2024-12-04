@@ -42,6 +42,15 @@ export function listPermitByDept(query,deptId,specialConditions){
   })
 }
 
+// 查询待办假条信息列表 （通过部门id）
+export function listPermitBacklog(query){
+	return request({
+		url: '/permit/permit/list/backlog',
+		method: 'get',
+		params: query
+	})
+}
+
 // 新增假条信息
 export function listPermitByUserId(query,id) {
   return request({

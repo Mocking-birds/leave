@@ -123,6 +123,8 @@
 		"style": {
 			"navigationBarTitleText": "销假申请"
 		}
+	},{
+		"path": "pages/work/request/index"
 	}],
 	"tabBar": {
 		"color": "#000000",
@@ -147,9 +149,9 @@
 		}]
 	},
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
+		"navigationBarTextStyle": "#fff",
 		"navigationBarTitleText": "RuoYi",
-		"navigationBarBackgroundColor": "#FFFFFF"
+		"navigationBarBackgroundColor": "#261c3f"
 	},
 	"condition": { //模式配置，仅开发期间生效
 		"current": 0, //当前激活的模式(list 的索引项)
