@@ -107,6 +107,8 @@
 		"path": "pages/work/request/index"
 	},{
 		"path": "pages/work/leave_list/index"
+	},{
+		"path": "pages/work/detail/index"
 	}],
 	"tabBar": {
 		"color": "#000000",

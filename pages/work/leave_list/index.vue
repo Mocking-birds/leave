@@ -4,7 +4,7 @@
 		<view class="header-section">
 		</view>
 		<view class="card-box">
-			<view class="card" v-for="(item,index) in permitList" :key="index">
+			<view class="card" v-for="(item,index) in permitList" :key="index" @click="fabClick(item.leaveId)">
 				<uni-section :title="item.permitType == '0'?'病假':'事假'" type="circle"></uni-section>
 				<view class="time">
 					<view class="start-end">
@@ -186,6 +186,15 @@
 					this.permitList.push(item)
 				})
 				this.total = res.total
+			},
+			// card点击跳转详情页
+			fabClick(id){
+				console.log('fabClick');
+				console.log(this.type);
+				console.log(id);
+				uni.navigateTo({
+					url: `/pages/work/detail/index?id=${id}&type=${this.type}`
+				})
 			},
 			// 格式化时间
 			formatTime(time) {
