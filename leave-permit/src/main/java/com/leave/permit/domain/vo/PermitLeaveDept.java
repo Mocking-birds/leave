@@ -22,6 +22,17 @@ public class PermitLeaveDept extends BaseEntity {
     @Excel(name = "请假类型", readConverterExp = "0=：病假，1：事假")
     private String permitType;
 
+    /** user_id */
+    private Long userId;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
     public String getPermitType() {
         return permitType;
     }
