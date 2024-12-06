@@ -192,9 +192,16 @@
 				console.log('fabClick');
 				console.log(this.type);
 				console.log(id);
-				uni.navigateTo({
-					url: `/pages/work/detail/index?id=${id}&type=${this.type}`
-				})
+				if(this.type == '假条列表'){
+					uni.navigateTo({
+						url: `/pages/work/detail/index?id=${id}&type=假条详细`
+					})
+				}else {
+					uni.navigateTo({
+						url: `/pages/work/detail/index?id=${id}&type=${this.type}`
+					})
+				}
+				
 			},
 			// 格式化时间
 			formatTime(time) {

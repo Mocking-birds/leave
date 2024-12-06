@@ -138,6 +138,7 @@
 		onLoad(params) {
 			this.leaveId = params.id
 			this.type = params.type
+			console.log(this.type);
 			this.getData()
 		},
 		methods: {
@@ -180,6 +181,7 @@
 			},
 			// 驳回
 			async rejBtn(){
+				console.log('取消');
 				if(this.type == '请假申请'){
 					this.permitDetailList.leaveStatus = '2'
 					const res = await updatePermit(this.permitDetailList)
@@ -197,7 +199,7 @@
 						this.popupMessage = '操作失败'
 						this.$refs.popup.open()
 					}
-				}else if (this.type == '销假申请'){
+				}else{
 					uni.navigateBack()
 				}
 			},

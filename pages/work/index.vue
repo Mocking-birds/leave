@@ -34,7 +34,7 @@
 		</view>
 
 		<view class="content">
-			<view class="card leave_card" v-for="(item,index) in permitList" :key="index" v-if="item.leaveStatus == '0' || item.isBack=='2'">
+			<view class="card leave_card" v-for="(item,index) in permitList" :key="index" v-if="item.leaveStatus == '0' || item.isBack=='2'" @click="fabClick(item)">
 				<view class="leave_pass">
 					审批中
 				</view>
@@ -237,6 +237,25 @@
 			// 格式化cartTitle
 			setChartTitle(name){
 				return "申请人：" + name
+			},
+			// 跳转假条详情
+			fabClick(item){
+				if(this.userInfo.roles[0] != 'student'){
+					if(item.leaveStatus == '0'){
+						uni.navigateTo({
+							url: `/pages/work/detail/index?id=${item.leaveId}&type=请假申请`
+						})
+					}else if (item.leaveStatus == '1' && item.isBack == '2'){
+						uni.navigateTo({
+							url: `/pages/work/detail/index?id=${item.leaveId}&type=销假申请`
+						})
+					}
+				}else{
+					uni.navigateTo({
+						url: `/pages/work/detail/index?id=${item.leaveId}&type=假条详细`
+					})
+				}
+
 			}
 		},
 		async created() {
