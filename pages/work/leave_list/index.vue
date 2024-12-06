@@ -58,7 +58,8 @@
 				backParams: {
 					pageNum: 1,
 					pageSize: 5,
-					isBack: 2,
+					leaveStatus: 1,
+					isBack: 0,
 					userId: 0
 				},
 				// 总数

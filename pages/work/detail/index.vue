@@ -89,7 +89,7 @@
 				</view>
 			</view>
 			<view class="permit_detail_btn" v-if="type != '假条详细'">
-				<button size="default" hover-class="is-hover" @click="subBtn">通过</button>
+				<button size="default" hover-class="is-hover" @click="subBtn">{{type == '销假'?'销假请求':'通过'}}</button>
 				<button size="default" hover-class="is-hover" @click="rejBtn">
 					{{type == '请假申请'?'驳回':'取消'}}
 				</button>
@@ -209,6 +209,8 @@
 					this.permitDetailList.leaveStatus = '1'
 				}else if (this.type == '销假申请'){
 					this.permitDetailList.isBack = '1'
+				}else if (this.type == '销假'){
+					this.permitDetailList.isBack = '2'
 				}
 				const res = await updatePermit(this.permitDetailList)
 				console.log(res);
