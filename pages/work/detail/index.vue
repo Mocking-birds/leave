@@ -81,7 +81,7 @@
 					{{permitDetailList.backTime}}
 				</view>
 			</view>
-			<view class="card permit_leave_back_location" v-if="permitDetailList.permitLocationList[1]">
+			<view class="card permit_leave_back_location" v-if="permitDetailList.permitLocationList[1].locationName">
 				<uni-section title="销假位置" type="circle"></uni-section>
 				<view class="location permit-value" @click="getLocation(1)">
 					<uni-icons type="location-filled" size="23" color="#2979FF"></uni-icons>
@@ -103,6 +103,7 @@
 		getPermit,
 		updatePermit
 	} from '@/api/leave/ask_for_leave.js'
+	import QQMap from "@/qqmap-wx-jssdk1.2/qqmap-wx-jssdk.js"
 	export default {
 		data() {
 			return {
@@ -210,6 +211,10 @@
 				}else if (this.type == '销假申请'){
 					this.permitDetailList.isBack = '1'
 				}else if (this.type == '销假'){
+					
+					this.permitDetailList.backTime = this.getCurrentTime()
+					 
+					this.getCurrentLocation()
 					this.permitDetailList.isBack = '2'
 				}
 				const res = await updatePermit(this.permitDetailList)
@@ -229,6 +234,65 @@
 					this.popupMessage = '操作失败'
 					this.$refs.popup.open()
 				}
+			},
+			// 获取当前时间
+			getCurrentTime(){
+				// 创建一个新的 Date 对象
+				const now = new Date();
+				 
+				// 获取各个时间组件
+				const year = now.getFullYear();
+				const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从0开始，所以要加1，并填充0
+				const day = String(now.getDate()).padStart(2, '0');
+				const hours = String(now.getHours()).padStart(2, '0');
+				const minutes = String(now.getMinutes()).padStart(2, '0');
+				const seconds = String(now.getSeconds()).padStart(2, '0');
+				 
+				// 格式化时间字符串
+				const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+				return formattedTime;
+			},
+			// 获取当前位置
+			getCurrentLocation(){
+				uni.getLocation({
+					type: 'gcj02', //返回可以用于uni.openLocation的经纬度
+					success: (res) => {
+						if (!this.permitDetailList.permitLocationList[1]) {
+							this.permitDetailList.permitLocationList[1] = {}
+						}
+						this.permitDetailList.permitLocationList[1].latitude = res.latitude
+						this.permitDetailList.permitLocationList[1].longitude = res.longitude
+				
+						console.log(this.permitDetailList.permitLocationList);
+				
+						// 实例化API核心类
+						this.qqmap = new QQMap({
+							key: 'PMGBZ-SDYKQ-6VS5O-4P3HN-ZVT75-VCFOB'
+						})
+				
+						// 逆地址解析
+						this.qqmap.reverseGeocoder({
+							location: {
+								latitude: this.permitDetailList.permitLocationList[1].latitude,
+								longitude: this.permitDetailList.permitLocationList[1].longitude
+							},
+							success: (res) => {
+								this.permitDetailList.permitLocationList[1].locationName = res.result
+									.address
+								this.permitDetailList.permitLocationList[1].locationType = 1
+			
+								console.log('成功');
+								console.log(this.permitDetailList);
+							},
+							fail: (res) => {
+								console.log(res);
+							}
+						})
+					},
+					fail: (res) => {
+						console.log(res);
+					}
+				});
 			}
 		}
 	}
