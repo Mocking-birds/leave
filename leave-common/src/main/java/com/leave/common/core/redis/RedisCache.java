@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.HashOperations;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedisCache
 {
+    private static final Logger log = LoggerFactory.getLogger(RedisCache.class);
     @Autowired
     public RedisTemplate redisTemplate;
 
@@ -46,6 +50,9 @@ public class RedisCache
      */
     public <T> void setCacheObject(final String key, final T value, final Integer timeout, final TimeUnit timeUnit)
     {
+        System.out.println("缓存2");
+        System.out.println("key:" + key);
+        System.out.println("value:" + value);
         redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
     }
 
@@ -105,6 +112,8 @@ public class RedisCache
     public <T> T getCacheObject(final String key)
     {
         ValueOperations<String, T> operation = redisTemplate.opsForValue();
+        System.out.println("key:" + key);
+        System.out.println("operation:" + operation.get(key));
         return operation.get(key);
     }
 

@@ -63,6 +63,7 @@ public class TokenService
     {
         // 获取请求携带的令牌
         String token = getToken(request);
+//        System.out.println("token:" + token);
         if (StringUtils.isNotEmpty(token))
         {
             try
@@ -72,6 +73,9 @@ public class TokenService
                 String uuid = (String) claims.get(Constants.LOGIN_USER_KEY);
                 String userKey = getTokenKey(uuid);
                 LoginUser user = redisCache.getCacheObject(userKey);
+                System.out.println("111 user:" + user);
+//                System.out.println("uuid:" + uuid);
+//                System.out.println("userKey:" + userKey);
                 return user;
             }
             catch (Exception e)
@@ -114,6 +118,7 @@ public class TokenService
     public String createToken(LoginUser loginUser)
     {
         String token = IdUtils.fastUUID();
+        System.out.println("创建令牌："+loginUser);
         loginUser.setToken(token);
         setUserAgent(loginUser);
         refreshToken(loginUser);
@@ -150,6 +155,7 @@ public class TokenService
         loginUser.setExpireTime(loginUser.getLoginTime() + expireTime * MILLIS_MINUTE);
         // 根据uuid将loginUser缓存
         String userKey = getTokenKey(loginUser.getToken());
+        System.out.println("缓存loginuser: "+loginUser);
         redisCache.setCacheObject(userKey, loginUser, expireTime, TimeUnit.MINUTES);
     }
 

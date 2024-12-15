@@ -127,3 +127,8 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+
+# 微信配置
+wechat:
+  appid: "wxc8de680677842e60"
+  secret: "60321c4fce59ccae7b9f48a562b4dc9a"

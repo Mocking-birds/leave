@@ -26,16 +26,24 @@ public class PermissionService
      */
     public boolean hasPermi(String permission)
     {
+        System.out.println("permission:"+permission);
         if (StringUtils.isEmpty(permission))
         {
             return false;
         }
         LoginUser loginUser = SecurityUtils.getLoginUser();
+        System.out.println("111");
+        System.out.println("loginUser:"+loginUser.toString());
         if (StringUtils.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getPermissions()))
         {
+            System.out.println("false");
+            System.out.println("?"+CollectionUtils.isEmpty(loginUser.getPermissions()));
             return false;
         }
+        System.out.println("122");
         PermissionContextHolder.setContext(permission);
+        System.out.println("123");
+        System.out.println("权限："+hasPermissions(loginUser.getPermissions(), permission));
         return hasPermissions(loginUser.getPermissions(), permission);
     }
 

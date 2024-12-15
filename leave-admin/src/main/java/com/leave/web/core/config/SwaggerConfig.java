@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import com.leave.common.config.RuoYiConfig;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.auth.In;
+import org.springframework.web.client.RestTemplate;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -121,5 +122,10 @@ public class SwaggerConfig
                 // 版本
                 .version("版本号:" + ruoyiConfig.getVersion())
                 .build();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

@@ -259,6 +259,23 @@ public class LoginUser implements UserDetails
     }
 
     @Override
+    public String toString() {
+        return "LoginUser{" +
+                "userId=" + userId +
+                ", deptId=" + deptId +
+                ", token='" + token + '\'' +
+                ", loginTime=" + loginTime +
+                ", expireTime=" + expireTime +
+                ", ipaddr='" + ipaddr + '\'' +
+                ", loginLocation='" + loginLocation + '\'' +
+                ", browser='" + browser + '\'' +
+                ", os='" + os + '\'' +
+                ", permissions=" + permissions +
+                ", user=" + user +
+                '}';
+    }
+
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities()
     {
         return null;

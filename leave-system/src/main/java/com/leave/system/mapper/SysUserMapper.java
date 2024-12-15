@@ -52,6 +52,14 @@ public interface SysUserMapper
     public SysUser selectUserById(Long userId);
 
     /**
+     * 通过openId查询用户
+     *
+     * @param openId
+     * @return 用户对象信息
+     */
+    public SysUser selectUserByOpenId(String openId);
+
+    /**
      * 新增用户信息
      * 
      * @param user 用户信息

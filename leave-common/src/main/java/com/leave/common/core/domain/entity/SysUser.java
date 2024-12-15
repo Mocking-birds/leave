@@ -32,6 +32,10 @@ public class SysUser extends BaseEntity
     @Excel(name = "部门编号", type = Type.IMPORT)
     private Long deptId;
 
+    /** 微信唯一标识 */
+    @Excel(name = "微信标识")
+    private String openId;
+
     /** 用户账号 */
     @Excel(name = "登录名称")
     private String userName;
@@ -116,6 +120,14 @@ public class SysUser extends BaseEntity
     public void setUserId(Long userId)
     {
         this.userId = userId;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 
     public boolean isAdmin()
@@ -319,6 +331,7 @@ public class SysUser extends BaseEntity
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("userId", getUserId())
             .append("deptId", getDeptId())
+            .append("openId", getOpenId())
             .append("userName", getUserName())
             .append("nickName", getNickName())
             .append("email", getEmail())

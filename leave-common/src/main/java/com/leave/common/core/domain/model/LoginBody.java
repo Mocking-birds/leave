@@ -27,6 +27,19 @@ public class LoginBody
      */
     private String uuid;
 
+    /**
+     * 微信登录时获取的code
+     */
+    private String jsCode;
+
+    public String getJsCode() {
+        return jsCode;
+    }
+
+    public void setJsCode(String jsCode) {
+        this.jsCode = jsCode;
+    }
+
     public String getUsername()
     {
         return username;

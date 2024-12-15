@@ -1,7 +1,12 @@
 package com.leave.framework.web.service;
 
 import javax.annotation.Resource;
+
+import cn.hutool.core.bean.BeanUtil;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +34,12 @@ import com.leave.framework.security.context.AuthenticationContextHolder;
 import com.leave.system.service.ISysConfigService;
 import com.leave.system.service.ISysUserService;
 
+import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.Objects;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 /**
  * 登录校验方法
  * 
@@ -51,6 +62,27 @@ public class SysLoginService
 
     @Autowired
     private ISysConfigService configService;
+
+    @Value("${wechat.appid}")
+    private String appid;
+
+    @Value("${wechat.secret}")
+    private String secret;
+
+    // 令牌秘钥
+    @Value("${token.secret}")
+    private String jwtSecret;
+
+    private final RestTemplate restTemplate;
+
+    private UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    public SysLoginService(RestTemplate restTemplate, UserDetailsServiceImpl userDetailsService) {
+        this.restTemplate = restTemplate;
+        this.userDetailsService = userDetailsService;
+    }
+
 
     /**
      * 登录验证
@@ -95,10 +127,39 @@ public class SysLoginService
         }
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        System.out.println("密码登录验证：" + loginUser);
         recordLoginInfo(loginUser.getUserId());
         // 生成token
         return tokenService.createToken(loginUser);
     }
+
+    /**
+     * 微信登录验证
+     *
+     * @param code
+     * @return 结果
+     */
+    public String wechatLogin(String code){
+        String url = String.format("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",appid,secret,code);
+        String response = restTemplate.getForObject(url, String.class);
+
+        // json转map
+        Gson gson = new Gson();
+        Type mapType = new TypeToken<Map<String,String>>(){}.getType();
+        Map<String, String> result = gson.fromJson(response, mapType);
+        System.out.println("result："+result);
+        if (Objects.equals(result.get("errcode"), "40163")){
+            throw new ServiceException(StringUtils.format("获取微信授权信息失败"));
+        }else {
+            SysUser user = userService.selectUserByOpenId(result.get("openid"));
+            System.out.println("测试："+user);
+            UserDetails userDetail = userDetailsService.createLoginUser(user);
+            LoginUser loginUser = BeanUtil.copyProperties(userDetail, LoginUser.class);
+            recordLoginInfo(loginUser.getUserId());
+            return tokenService.createToken(loginUser);
+        }
+    }
+
 
     /**
      * 校验验证码
@@ -165,6 +226,7 @@ public class SysLoginService
         }
     }
 
+
     /**
      * 记录登录信息
      *
@@ -178,4 +240,5 @@ public class SysLoginService
         sysUser.setLoginDate(DateUtils.getNowDate());
         userService.updateUserProfile(sysUser);
     }
+
 }

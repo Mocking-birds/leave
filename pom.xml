@@ -140,6 +140,12 @@
                 <version>${jwt.version}</version>
             </dependency>
 
+            <!-- 用于HTTP请求的RestTemplate（或者你可以使用WebClient） -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-webflux</artifactId> <!-- WebClient在此依赖中 -->
+            </dependency>
+
             <!-- 验证码 -->
             <dependency>
                 <groupId>pro.fessional</groupId>

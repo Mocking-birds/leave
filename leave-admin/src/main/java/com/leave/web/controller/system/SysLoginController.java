@@ -1,8 +1,21 @@
 package com.leave.web.controller.system;
 
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.Type;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
+
+
+import com.leave.common.core.domain.model.LoginUser;
+import com.leave.framework.web.service.UserDetailsServiceImpl;
+import com.leave.system.service.ISysUserService;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +30,7 @@ import com.leave.framework.web.service.SysLoginService;
 import com.leave.framework.web.service.SysPermissionService;
 import com.leave.system.service.ISysMenuService;
 
+
 /**
  * 登录验证
  * 
@@ -29,10 +43,14 @@ public class SysLoginController
     private SysLoginService loginService;
 
     @Autowired
+    private ISysUserService userService;
+
+    @Autowired
     private ISysMenuService menuService;
 
     @Autowired
     private SysPermissionService permissionService;
+
 
     /**
      * 登录方法
@@ -47,6 +65,21 @@ public class SysLoginController
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
                 loginBody.getUuid());
+        ajax.put(Constants.TOKEN, token);
+        return ajax;
+    }
+
+    /**
+     * 微信登录
+     *
+     * @params code
+     * @return 结果
+     */
+    @PostMapping("/wechat/login")
+    public AjaxResult wechatLogin(@RequestBody LoginBody loginBody){
+        AjaxResult ajax = AjaxResult.success();
+
+        String token = loginService.wechatLogin(loginBody.getJsCode());
         ajax.put(Constants.TOKEN, token);
         return ajax;
     }
