@@ -28,7 +28,7 @@
 				</view>
 			</view>
 			<view class='cropper-config'>
-				<button type="primary reverse" @click="getImage" style='margin-top: 30rpx;'> 选择头像 </button>
+				<button type="primary reverse" open-type="chooseAvatar" @chooseavatar="getImage" style='margin-top: 30rpx;'> 选择头像 </button>
 				<button type="warn" @click="getImageInfo" style='margin-top: 30rpx;'> 提交 </button>
 			</view>
 			<canvas canvas-id="myCanvas" :style="'position:absolute;border: 1px solid red; width:'+imageW+'px;height:'+imageH+'px;top:-9999px;left:-9999px;'"></canvas>
@@ -110,16 +110,11 @@
 					that.$set(that.$data, key, obj[key])
 				})
 			},
-			getImage: function () {
+			getImage: function (e) {
 				var _this = this
-				uni.chooseImage({
-					success: function (res) {
-						console.log(res)
-						_this.setData({
-							imageSrc: res.tempFilePaths[0],
-						})
-						_this.loadImage()
-					},
+				console.log(e);
+				_this.setData({
+					imageSrc: e.detail.avatarUrl
 				})
 			},
 			loadImage: function () {

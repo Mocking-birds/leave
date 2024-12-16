@@ -12,10 +12,19 @@
           <view v-if="!name" @click="handleToLogin" class="login-tip">
             点击登录
           </view>
-          <view v-if="name" @click="handleToInfo" class="user-info">
+          <view v-if="name" class="user-info">
             <view class="u_title">
               {{ name }}
             </view>
+			<view class="wechat-promission" v-if="!wechatPermission" @click="wechatBinding">
+				点击绑定微信
+			</view>
+			<view class="wechat-promission-true" v-else>
+				<uni-icons type="weixin" size="25"></uni-icons>
+				<view style="padding-left: 5px;">
+					已绑定
+				</view>
+			</view>
           </view>
         </view>
         <view @click="handleToInfo" class="flex align-center">
@@ -78,14 +87,24 @@
 
 <script>
   import storage from '@/utils/storage'
+  import {getInfo,wechatBinding} from '@/api/system/user.js'
   
   export default {
     data() {
       return {
         name: this.$store.state.user.name,
-        version: getApp().globalData.config.appInfo.version
+        version: getApp().globalData.config.appInfo.version,
+		// 微信是否授权
+		wechatPermission: false
       }
     },
+	async created() {
+		const res = await getInfo()
+		console.log(res);
+		if(res.user.openId){
+			this.wechatPermission = true
+		}
+	},
     computed: {
       avatar() {
         return this.$store.state.user.avatar
@@ -128,7 +147,29 @@
       },
       handleBuilding() {
         this.$modal.showToast('模块建设中~')
-      }
+      },
+	  // 绑定微信
+	  wechatBinding(){
+		  uni.login({
+		  	provider: 'weixin',
+			"onlyAuthorize": true,
+			success: async (e) => {
+				console.log(e.code);
+				const res = await wechatBinding({
+					jsCode: e.code,
+					username: this.name
+				})
+				console.log(res);
+				if(res.code == 200){
+					this.$modal.showToast('微信绑定成功')
+					this.wechatPermission = true
+				}
+			},
+			fail: (err) => {
+				console.log(err);
+			}
+		  })
+	  }
     }
   }
 </script>
@@ -145,7 +186,7 @@
 
     .header-section {
       padding: 15px 15px 45px 15px;
-      background-color: #3c96f3;
+      background-color: #261c3f;
       color: white;
 
       .login-tip {
@@ -168,6 +209,19 @@
           font-size: 18px;
           line-height: 30px;
         }
+		
+		.wechat-promission-true{
+			margin-top: 5px;
+			display: flex;
+			align-items: center;
+			border-radius: 20px;
+			padding:2px 7px;
+			background-image: linear-gradient(to right, #a57b31, #b18a3d, #bc994a, #c8a857, #d3b864);
+			
+			.uni-icons{
+				color:green !important;
+			}
+		}
       }
     }
 

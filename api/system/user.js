@@ -73,3 +73,12 @@ export function getInfo() {
     method: 'get'
   })
 }
+
+// 微信授权
+export function wechatBinding(data){
+	return request({
+		url: '/system/user/wechat/binding',
+		method: 'put',
+		data: data
+	})
+}
