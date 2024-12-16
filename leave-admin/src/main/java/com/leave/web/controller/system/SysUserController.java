@@ -1,11 +1,24 @@
 package com.leave.web.controller.system;
 
+import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+
+import cn.hutool.core.bean.BeanUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.leave.common.core.domain.model.LoginBody;
+import com.leave.common.core.domain.model.LoginUser;
+import com.leave.common.exception.ServiceException;
 import org.apache.commons.lang3.ArrayUtils;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +28,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import com.leave.common.annotation.Log;
 import com.leave.common.core.controller.BaseController;
@@ -52,6 +66,22 @@ public class SysUserController extends BaseController
 
     @Autowired
     private ISysPostService postService;
+
+    @Value("${wechat.appid}")
+    private String appid;
+
+    @Value("${wechat.secret}")
+    private String secret;
+
+    // 令牌秘钥
+    @Value("${token.secret}")
+    private String jwtSecret;
+
+    private final RestTemplate restTemplate;
+
+    public SysUserController(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     /**
      * 获取用户列表
@@ -243,6 +273,40 @@ public class SysUserController extends BaseController
         userService.insertUserAuth(userId, roleIds);
         return success();
     }
+
+    /**
+     * 微信授权
+     */
+    @PreAuthorize("@ss.hasPermi('system:user:edit')")
+    @PutMapping("/wechat/binding")
+    public AjaxResult binding(@RequestBody LoginBody loginBody){
+
+        String jsCode = loginBody.getJsCode();
+        String url = String.format("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",appid,secret,jsCode);
+        String response = restTemplate.getForObject(url, String.class);
+
+        // json转map
+        Gson gson = new Gson();
+        Type mapType = new TypeToken<Map<String,String>>(){}.getType();
+        Map<String, String> result = gson.fromJson(response, mapType);
+        System.out.println("result："+result);
+        String openId = result.get("openid");
+        SysUser user = userService.selectUserByUserName(loginBody.getUsername());
+        if (Objects.equals(result.get("errcode"), "40163")){
+            throw new ServiceException(StringUtils.format("获取微信授权信息失败"));
+        } else if(user == null){
+            throw new ServiceException(StringUtils.format("未绑定微信"));
+        } else {
+            String userName = user.getUserName();
+            userService.checkUserAllowed(user);
+            userService.checkUserDataScope(user.getUserId());
+            user.setUpdateBy(getUsername());
+
+            return toAjax(userService.updateUserOpenId(userName, openId));
+        }
+
+    }
+
 
     /**
      * 获取部门树列表

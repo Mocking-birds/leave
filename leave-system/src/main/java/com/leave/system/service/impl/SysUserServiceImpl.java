@@ -313,6 +313,17 @@ public class SysUserServiceImpl implements ISysUserService
     }
 
     /**
+     * 微信授权
+     *
+     * @param userName
+     * @param openId
+     */
+    @Override
+    public boolean updateUserOpenId(String userName, String openId){
+        return userMapper.updateUserOpenId(userName, openId) > 0;
+    }
+
+    /**
      * 用户授权角色
      * 
      * @param userId 用户ID

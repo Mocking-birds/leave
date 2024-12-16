@@ -170,6 +170,15 @@ public interface ISysUserService
     public boolean updateUserAvatar(String userName, String avatar);
 
     /**
+     * 微信授权
+     *
+     * @param userName 用户名
+     * @param openId 微信唯一标识
+     * @return 结果
+     */
+    public boolean updateUserOpenId(String userName, String openId);
+
+    /**
      * 重置用户密码
      * 
      * @param user 用户信息

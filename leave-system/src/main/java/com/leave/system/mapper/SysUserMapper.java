@@ -94,6 +94,15 @@ public interface SysUserMapper
     public int resetUserPwd(@Param("userName") String userName, @Param("password") String password);
 
     /**
+     * 微信授权
+     *
+     * @param userName 用户名
+     * @param openId 微信唯一标识
+     * @return 结果
+     */
+    public int updateUserOpenId(@Param("userName") String userName, @Param("openId") String openId);
+
+    /**
      * 通过用户ID删除用户
      * 
      * @param userId 用户ID

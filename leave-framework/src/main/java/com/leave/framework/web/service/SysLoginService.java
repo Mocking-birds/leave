@@ -148,11 +148,14 @@ public class SysLoginService
         Type mapType = new TypeToken<Map<String,String>>(){}.getType();
         Map<String, String> result = gson.fromJson(response, mapType);
         System.out.println("result："+result);
+        SysUser user = userService.selectUserByOpenId(result.get("openid"));
+        System.out.println("测试："+user);
         if (Objects.equals(result.get("errcode"), "40163")){
             throw new ServiceException(StringUtils.format("获取微信授权信息失败"));
-        }else {
-            SysUser user = userService.selectUserByOpenId(result.get("openid"));
-            System.out.println("测试："+user);
+        } else if(user == null){
+            throw new ServiceException(StringUtils.format("未绑定微信"));
+        } else {
+
             UserDetails userDetail = userDetailsService.createLoginUser(user);
             LoginUser loginUser = BeanUtil.copyProperties(userDetail, LoginUser.class);
             recordLoginInfo(loginUser.getUserId());
