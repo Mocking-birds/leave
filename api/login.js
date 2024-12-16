@@ -18,6 +18,20 @@ export function login(username, password, code, uuid) {
   })
 }
 
+// 微信登录
+export function wechatLogin(jsCode){
+	return request({
+		url: '/wechat/login',
+		headers: {
+			isToken: false
+		},
+		method: 'post',
+		data: {
+			jsCode: jsCode
+		}
+	})
+}
+
 // 注册方法
 export function register(data) {
   return request({

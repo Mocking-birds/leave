@@ -14,7 +14,9 @@
             "autoclose" : true,
             "delay" : 0
         },
-        "modules" : {},
+        "modules" : {
+            "OAuth" : {}
+        },
         "distribute" : {
             "android" : {
                 "permissions" : [
@@ -36,7 +38,14 @@
                 ]
             },
             "ios" : {},
-            "sdkConfigs" : {}
+            "sdkConfigs" : {
+                "oauth" : {
+                    "weixin" : {
+                        "appid" : "wxc8de680677842e60",
+                        "UniversalLinks" : ""
+                    }
+                }
+            }
         }
     },
     "quickapp" : {},

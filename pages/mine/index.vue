@@ -14,7 +14,7 @@
           </view>
           <view v-if="name" @click="handleToInfo" class="user-info">
             <view class="u_title">
-              用户名：{{ name }}
+              {{ name }}
             </view>
           </view>
         </view>

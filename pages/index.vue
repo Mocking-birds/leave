@@ -85,6 +85,7 @@
 		async created() {
 			this.roleName = user.state.roles[0]
 			console.log('created');
+			console.log(user);
 			this.getData()
 		},
 		mounted() {
