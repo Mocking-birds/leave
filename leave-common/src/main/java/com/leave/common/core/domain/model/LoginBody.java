@@ -18,6 +18,19 @@ public class LoginBody
     private String password;
 
     /**
+     * 电话
+     */
+    private String phonenumber;
+
+    public String getPhonenumber() {
+        return phonenumber;
+    }
+
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber;
+    }
+
+    /**
      * 验证码
      */
     private String code;
@@ -31,6 +44,19 @@ public class LoginBody
      * 微信登录时获取的code
      */
     private String jsCode;
+
+    /**
+     * 短信验证码
+     */
+    private String smsCode;
+
+    public String getSmsCode() {
+        return smsCode;
+    }
+
+    public void setSmsCode(String smsCode) {
+        this.smsCode = smsCode;
+    }
 
     public String getJsCode() {
         return jsCode;

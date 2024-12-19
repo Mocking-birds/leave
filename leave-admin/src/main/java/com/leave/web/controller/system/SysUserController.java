@@ -67,11 +67,6 @@ public class SysUserController extends BaseController
     @Autowired
     private ISysPostService postService;
 
-    @Value("${wechat.appid}")
-    private String appid;
-
-    @Value("${wechat.secret}")
-    private String secret;
 
     // 令牌秘钥
     @Value("${token.secret}")
@@ -282,7 +277,7 @@ public class SysUserController extends BaseController
     public AjaxResult binding(@RequestBody LoginBody loginBody){
 
         String jsCode = loginBody.getJsCode();
-        String url = String.format("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",appid,secret,jsCode);
+        String url = String.format("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",System.getenv("WECHAT_APPID"),System.getenv("WECHAT_SECRET"),jsCode);
         String response = restTemplate.getForObject(url, String.class);
 
         // json转map
@@ -306,6 +301,7 @@ public class SysUserController extends BaseController
         }
 
     }
+
 
 
     /**

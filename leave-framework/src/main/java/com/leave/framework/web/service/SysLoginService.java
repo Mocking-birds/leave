@@ -3,6 +3,13 @@ package com.leave.framework.web.service;
 import javax.annotation.Resource;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONUtil;
+import com.aliyun.dysmsapi20170525.Client;
+import com.aliyun.dysmsapi20170525.models.SendSmsRequest;
+import com.aliyun.dysmsapi20170525.models.SendSmsResponse;
+import com.aliyun.teaopenapi.models.Config;
+import com.leave.common.core.domain.model.LoginBody;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +42,17 @@ import com.leave.system.service.ISysConfigService;
 import com.leave.system.service.ISysUserService;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import java.lang.System;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+
+import static com.aliyun.teautil.Common.toJSONString;
 
 /**
  * 登录校验方法
@@ -63,17 +77,26 @@ public class SysLoginService
     @Autowired
     private ISysConfigService configService;
 
-    @Value("${wechat.appid}")
-    private String appid;
-
-    @Value("${wechat.secret}")
-    private String secret;
-
     // 令牌秘钥
     @Value("${token.secret}")
     private String jwtSecret;
 
+    // 短信服务访问域名
+    @Value("${aliyun.endpoint}")
+    private String endpoint;
+
+    // 短信模板code
+    @Value("${aliyun.templateCode}")
+    private String templateCode;
+
+    // 短信签名名称
+    @Value("${aliyun.signName}")
+    private String signName;
+
     private final RestTemplate restTemplate;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     private UserDetailsServiceImpl userDetailsService;
 
@@ -136,20 +159,19 @@ public class SysLoginService
     /**
      * 微信登录验证
      *
-     * @param code
+     * @param code 微信登录时获取的code
      * @return 结果
      */
     public String wechatLogin(String code){
-        String url = String.format("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",appid,secret,code);
+        String url = String.format("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",System.getenv("WECHAT_APPID"),System.getenv("WECHAT_SECRET"),code);
         String response = restTemplate.getForObject(url, String.class);
 
         // json转map
         Gson gson = new Gson();
         Type mapType = new TypeToken<Map<String,String>>(){}.getType();
         Map<String, String> result = gson.fromJson(response, mapType);
-        System.out.println("result："+result);
         SysUser user = userService.selectUserByOpenId(result.get("openid"));
-        System.out.println("测试："+user);
+
         if (Objects.equals(result.get("errcode"), "40163")){
             throw new ServiceException(StringUtils.format("获取微信授权信息失败"));
         } else if(user == null){
@@ -161,6 +183,76 @@ public class SysLoginService
             recordLoginInfo(loginUser.getUserId());
             return tokenService.createToken(loginUser);
         }
+    }
+
+    /**
+     * 短信验证码发送
+     *
+     * @param phonenumber 电话号码
+     * @return 结果
+     */
+    public Boolean getSmscode(String phonenumber) throws Exception {
+        Config config = new Config()
+                .setAccessKeyId(System.getenv("ALIYUN_ACCESS_KEY_ID"))
+                .setAccessKeySecret(System.getenv("ALIYUN_ACCESS_KEY_SECRET"))
+                .setEndpoint(endpoint);
+
+        Client client = new Client(config);
+
+        // 生成验证码
+        Random random = new Random();
+        int captcha = 100000 + random.nextInt(900000);
+
+        Map<String, Integer> map = new HashMap<>();
+        map.put("code",captcha);
+
+        System.out.println("map:"+ JSONUtil.toJsonStr(map));
+
+        try{
+            SendSmsRequest sendSmsRequest = new SendSmsRequest()
+                    .setPhoneNumbers(phonenumber)
+                    .setSignName(signName)
+                    .setTemplateCode(templateCode)
+                    .setTemplateParam(JSONUtil.toJsonStr(map));
+            // 获取响应对象
+            SendSmsResponse sendSmsResponse = client.sendSms(sendSmsRequest);
+            System.out.println("电话号码："+phonenumber);
+            System.out.println("结果："+toJSONString(sendSmsResponse));
+            if(sendSmsResponse.getBody().getCode().equals("OK")){
+                // 将验证码存储到Redis，过期时间 1分钟
+                redisTemplate.opsForValue().set(phonenumber, captcha, 1, TimeUnit.MINUTES);
+                return true;
+            }else {
+                return false;
+            }
+        }catch (Exception e){
+            throw new ServiceException(e.getMessage());
+        }
+
+    }
+
+    /**
+     * 短信验证码登录验证
+     *
+     * @param loginBody 登录参数
+     * @return 结果
+     */
+    public String phoneLogin(LoginBody loginBody) throws Exception {
+        Object storedCaptcha = redisTemplate.opsForValue().get(loginBody.getPhonenumber());
+        System.out.println("storedCaptcha:"+storedCaptcha);
+        String storeCaptcha = storedCaptcha.toString();
+        if(storeCaptcha != null && storeCaptcha.equals(loginBody.getSmsCode())){
+            SysUser user = userService.selectUserByPhone(loginBody.getPhonenumber());
+            UserDetails userDetail = userDetailsService.createLoginUser(user);
+            LoginUser loginUser = BeanUtil.copyProperties(userDetail, LoginUser.class);
+            recordLoginInfo(loginUser.getUserId());
+            return tokenService.createToken(loginUser);
+        }else {
+            System.out.println("smscode:"+loginBody.getSmsCode());
+            System.out.println("正确："+storeCaptcha.equals(loginBody.getSmsCode()));
+            throw new ServiceException("验证码验证失败");
+        }
+
     }
 
 

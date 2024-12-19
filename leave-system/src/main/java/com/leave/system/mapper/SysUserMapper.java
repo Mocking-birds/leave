@@ -60,6 +60,14 @@ public interface SysUserMapper
     public SysUser selectUserByOpenId(String openId);
 
     /**
+     * 通过phonenumber查询用户
+     *
+     * @param phonenumber
+     * @return 用户对象信息
+     */
+    public SysUser selectUserByPhone(String phonenumber);
+
+    /**
      * 新增用户信息
      * 
      * @param user 用户信息

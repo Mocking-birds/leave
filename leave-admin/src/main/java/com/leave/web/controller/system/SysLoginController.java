@@ -14,6 +14,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.http.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -72,7 +73,7 @@ public class SysLoginController
     /**
      * 微信登录
      *
-     * @params code
+     * @param loginBody 登录信息
      * @return 结果
      */
     @PostMapping("/wechat/login")
@@ -80,6 +81,45 @@ public class SysLoginController
         AjaxResult ajax = AjaxResult.success();
 
         String token = loginService.wechatLogin(loginBody.getJsCode());
+        ajax.put(Constants.TOKEN, token);
+        return ajax;
+    }
+
+    /**
+     * 短信验证码发送
+     *
+     * @param phonenumber 手机号码
+     * @return 结果
+     */
+    @GetMapping("/smscode")
+    public AjaxResult getSmscode(String phonenumber) throws Exception {
+
+        SysUser user1 = userService.selectUserByPhone(phonenumber);
+        if(user1 != null){
+            Boolean res = loginService.getSmscode(phonenumber);
+            if(res){
+                return AjaxResult.success();
+            }else {
+                return AjaxResult.error("短信发送失败");
+            }
+        }else {
+            return AjaxResult.error("手机号没有对应用户");
+        }
+    }
+
+    /**
+     * 短信验证码登录
+     *
+     * @param loginBody 登录信息
+     * @return 结果
+     */
+    @PostMapping("/phone/login")
+    public AjaxResult phoneLogin(@RequestBody LoginBody loginBody) throws Exception {
+        AjaxResult ajax = AjaxResult.success();
+
+        loginService.phoneLogin(loginBody);
+
+        String token = loginService.phoneLogin(loginBody);
         ajax.put(Constants.TOKEN, token);
         return ajax;
     }

@@ -138,6 +138,15 @@ public class SysUserServiceImpl implements ISysUserService
     public SysUser selectUserByOpenId(String openId){return userMapper.selectUserByOpenId(openId);}
 
     /**
+     * 通过phonenumber查询用户
+     *
+     * @param phonenumber
+     * @return 用户对象信息
+     */
+    @Override
+    public SysUser selectUserByPhone(String phonenumber){return userMapper.selectUserByPhone(phonenumber);}
+
+    /**
      * 查询用户所属角色组
      * 
      * @param userName 用户名

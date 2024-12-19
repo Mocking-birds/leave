@@ -128,7 +128,8 @@ xss:
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
 
-# 微信配置
-wechat:
-  appid: "wxc8de680677842e60"
-  secret: "60321c4fce59ccae7b9f48a562b4dc9a"
+# 短信服务配置
+aliyun:
+  endpoint: "dysmsapi.aliyuncs.com"
+  templateCode: "SMS_476260352"
+  signName: "mysig短信"
