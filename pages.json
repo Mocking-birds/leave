@@ -1,9 +1,6 @@
 {
 	"pages": [{
-		"path": "pages/login",
-		"style": {
-			"navigationBarTitleText": "登录"
-		}
+		"path": "pages/login"
 	}, {
 		"path": "pages/register",
 		"style": {
@@ -109,6 +106,8 @@
 		"path": "pages/work/leave_list/index"
 	},{
 		"path": "pages/work/detail/index"
+	},{
+		"path": "pages/smsCode"
 	}],
 	"tabBar": {
 		"color": "#000000",
@@ -134,7 +133,6 @@
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "#fff",
-		"navigationBarTitleText": "RuoYi",
 		"navigationBarBackgroundColor": "#261c3f"
 	},
 	"condition": { //模式配置，仅开发期间生效

@@ -1,28 +1,40 @@
 <template>
 	<view class="normal-login-container">
-		<view class="logo-content align-center justify-center flex">
-			<image style="width: 100rpx;height: 100rpx;" :src="globalConfig.appInfo.logo" mode="widthFix">
-			</image>
-			<text class="title">若依移动端登录</text>
+		<view class="header-section">
+			<view class="header-section-center">
+				<image style="width: 100px;height: 100px;" :src="globalConfig.appInfo.logo" mode="widthFix">
+				</image>
+				<text class="title">欢迎来到请销假系统</text>
+			</view>
 		</view>
 		<view class="login-form-content">
-			<view class="input-item flex align-center">
-				<view class="iconfont icon-user icon"></view>
-				<input v-model="loginForm.username" class="input" type="text" placeholder="请输入账号" maxlength="30" />
+			<view class="login-for-password" v-if="!phone">
+				<view class="input-item flex align-center">
+					<view class="iconfont icon-user icon"></view>
+					<input v-model="loginForm.username" class="input" type="text" placeholder="请输入账号" maxlength="30" />
+				</view>
+				<view class="input-item flex align-center">
+					<view class="iconfont icon-password icon"></view>
+					<input v-model="loginForm.password" type="password" class="input" placeholder="请输入密码" maxlength="20" />
+				</view>
+				<view class="input-item flex align-center" style="width: 60%;margin: 0px;" v-if="captchaEnabled">
+					<view class="iconfont icon-code icon"></view>
+					<input v-model="loginForm.code" type="number" class="input" placeholder="请输入验证码" maxlength="4" />
+					<view class="login-code">
+						<image :src="codeUrl" @click="getCode" class="login-code-img"></image>
+					</view>
+				</view>
 			</view>
-			<view class="input-item flex align-center">
-				<view class="iconfont icon-password icon"></view>
-				<input v-model="loginForm.password" type="password" class="input" placeholder="请输入密码" maxlength="20" />
-			</view>
-			<view class="input-item flex align-center" style="width: 60%;margin: 0px;" v-if="captchaEnabled">
-				<view class="iconfont icon-code icon"></view>
-				<input v-model="loginForm.code" type="number" class="input" placeholder="请输入验证码" maxlength="4" />
-				<view class="login-code">
-					<image :src="codeUrl" @click="getCode" class="login-code-img"></image>
+			<view class="login-for-phone" v-else>
+				<view class="input-item flex align-center">
+					<view class="iconfont icon">
+						<uni-icons type="phone"></uni-icons>
+					</view>
+					<input v-model="phonenumber" class="input" type="text" placeholder="请输入手机号" maxlength="30" />
 				</view>
 			</view>
 			<view class="action-btn">
-				<button @click="handleLogin" class="login-btn cu-btn block bg-blue lg round">登录</button>
+				<button @click="handleLogin" class="login-btn cu-btn block bg-blue lg round">{{phone == true?"获取验证码":"登录"}}</button>
 			</view>
 			<view class="reg text-center" v-if="register">
 				<text class="text-grey1">没有账号？</text>
@@ -38,8 +50,12 @@
 					<uni-icons class="weixin" type="weixin" size="35"></uni-icons>
 				</button>
 				
-				<button class="other-login-btn phone-btn" size="35">
+				<button class="other-login-btn phone-btn" size="35" @click="phoneLogin" v-if="!phone">
 					<uni-icons class="phone" type="phone-filled" size="35"></uni-icons>
+				</button>
+				
+				<button class="other-login-btn psw-btn" size="35" @click="pswLogin" v-else>
+					<uni-icons class="psw" type="person-filled" size="35"></uni-icons>
 				</button>
 			</view>
 		</view>
@@ -50,7 +66,8 @@
 <script>
 	import {
 		getCodeImg,
-		wechatLogin
+		wechatLogin,
+		getSMSCode
 	} from '@/api/login'
 
 	export default {
@@ -60,13 +77,18 @@
 				captchaEnabled: true,
 				// 用户注册开关
 				register: false,
+				// 短信验证码登录开关
+				phone: false,
 				globalConfig: getApp().globalData.config,
+				// 密码登录参数
 				loginForm: {
 					username: "admin",
 					password: "admin123",
 					code: "",
 					uuid: ''
-				}
+				},
+				// 电话号码
+				phonenumber:''
 			}
 		},
 		created() {
@@ -100,16 +122,38 @@
 			},
 			// 登录方法
 			async handleLogin() {
-				if (this.loginForm.username === "") {
-					this.$modal.msgError("请输入您的账号")
-				} else if (this.loginForm.password === "") {
-					this.$modal.msgError("请输入您的密码")
-				} else if (this.loginForm.code === "" && this.captchaEnabled) {
-					this.$modal.msgError("请输入验证码")
-				} else {
-					this.$modal.loading("登录中，请耐心等待...")
-					this.pwdLogin()
+				if(this.phone){
+					// 获取验证码
+					if(this.phonenumber === ""){
+						this.$modal.msgError("请输入你的电话")
+					}else{
+						const res = await getSMSCode(this.phonenumber)
+						console.log(res);
+						if(res.code == 200){
+							uni.navigateTo({
+								url: `/pages/smsCode?phonenumber=${this.phonenumber}`
+							})
+						}
+						
+						// console.log('111 ');
+						// uni.navigateTo({
+						// 	url: `/pages/smsCode?phonenumber=${this.phonenumber}`
+						// })
+					}
+				}else{
+					// 密码
+					if (this.loginForm.username === "") {
+						this.$modal.msgError("请输入您的账号")
+					} else if (this.loginForm.password === "") {
+						this.$modal.msgError("请输入您的密码")
+					} else if (this.loginForm.code === "" && this.captchaEnabled) {
+						this.$modal.msgError("请输入验证码")
+					} else {
+						this.$modal.loading("登录中，请耐心等待...")
+						this.pwdLogin()
+					}
 				}
+				
 			},
 			// 密码登录
 			async pwdLogin() {
@@ -147,6 +191,14 @@
 						console.log(err);
 					}
 				})
+			},
+			// 点击手机登录
+			phoneLogin(){
+				this.phone = true
+			},
+			// 点击密码登录
+			pswLogin(){
+				this.phone = false
 			}
 		}
 	}
@@ -159,27 +211,44 @@
 
 	.normal-login-container {
 		width: 100%;
-
-		.logo-content {
+		.header-section{
 			width: 100%;
-			font-size: 21px;
-			text-align: center;
-			padding-top: 15%;
-
-			image {
-				border-radius: 4px;
-			}
-
-			.title {
-				margin-left: 10px;
+			height: 200px;
+			background-color: #261c3f;
+			border-bottom-left-radius: 50px 10px;
+			border-bottom-right-radius: 50px 10px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			
+			.header-section-center{
+				width: 100%;
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: start;
+				color: #ffffff;
+				
+				.title{
+					font-size: 17px;
+					font-weight: 700;
+				}
 			}
 		}
 
 		.login-form-content {
 			text-align: center;
 			margin: 20px auto;
-			margin-top: 15%;
+			margin-top: 10%;
 			width: 80%;
+			
+			.login-for-phone{
+				.uniui-phone{
+					color: #999 !important;
+					font-size: 38rpx !important;
+				}
+			}
 
 			.input-item {
 				margin: 20px auto;
@@ -256,13 +325,19 @@
 							color: #ffffff !important;
 						}
 					}
+					
+					.psw{
+						.uni-icons{
+							color: #ffffff !important;
+						}
+					}
 				}
 				
 				.weixin-btn{
 					background-color: green;
 				}
 				
-				.phone-btn{
+				.phone-btn,.psw-btn{
 					background-color: #000;
 				}
 			}

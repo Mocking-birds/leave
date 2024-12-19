@@ -1,7 +1,7 @@
 import config from '@/config'
 import storage from '@/utils/storage'
 import constant from '@/utils/constant'
-import { login, wechatLogin, logout, getInfo } from '@/api/login'
+import { login, wechatLogin, phoneLogin, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const baseUrl = config.baseUrl
@@ -64,6 +64,20 @@ const user = {
 	WechatLogin({ commit }, code) {
 		return new Promise((resolve, reject) => {
 			wechatLogin(code).then(res => {
+				console.log(res);
+				setToken(res.token)
+				commit('SET_TOKEN', res.token)
+				resolve()
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	},
+	
+	// 短信验证码登录
+	PhoneLogin({ commit }, data){
+		return new Promise((resolve, reject) => {
+			phoneLogin(data).then(res => {
 				console.log(res);
 				setToken(res.token)
 				commit('SET_TOKEN', res.token)

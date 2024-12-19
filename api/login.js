@@ -32,6 +32,32 @@ export function wechatLogin(jsCode){
 	})
 }
 
+// 获取短信验证码
+export function getSMSCode(data){
+	return request({
+		url: '/smscode',
+		headers: {
+			isToken: false
+		},
+		method: 'get',
+		params: {
+			phonenumber: data
+		}
+	})
+}
+
+// 短信验证码登录
+export function phoneLogin(data){
+	return request({
+		url: '/phone/login',
+		headers: {
+			isToken: false
+		},
+		method: 'post',
+		data: data
+	})
+}
+
 // 注册方法
 export function register(data) {
   return request({
