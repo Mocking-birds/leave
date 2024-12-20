@@ -1,5 +1,8 @@
 <template>
-  <view class="mine-container" :style="{height: `${windowHeight}px`}">
+  <view 
+	class="mine-container" 
+	:style="{height: `${windowHeight}px`}"
+>
     <!--顶部个人信息栏-->
     <view class="header-section">
       <view class="flex padding justify-between">
@@ -35,24 +38,43 @@
     </view>
 
     <view class="content-section">
-      <view class="mine-actions grid col-4 text-center">
-        <view class="action-item" @click="handleJiaoLiuQun">
-          <view class="iconfont icon-friendfill text-pink icon"></view>
-          <text class="text">交流群</text>
-        </view>
-        <view class="action-item" @click="handleBuilding">
-          <view class="iconfont icon-service text-blue icon"></view>
-          <text class="text">在线客服</text>
-        </view>
-        <view class="action-item" @click="handleBuilding">
-          <view class="iconfont icon-community text-mauve icon"></view>
-          <text class="text">反馈社区</text>
-        </view>
-        <view class="action-item" @click="handleBuilding">
-          <view class="iconfont icon-dianzan text-green icon"></view>
-          <text class="text">点赞我们</text>
-        </view>
+      <view class="mine-actions">
+		<view class="current-location" @click="openLocation">
+			<uni-icons type="location" size="22"></uni-icons>
+			<view class="current-location-content">
+				当前所处位置：{{locationName}}
+			</view>
+		</view>
       </view>
+	  
+	  <view class="data-section">
+			<view class="data-section-type">
+				<view class="data-section-item">
+					<view class="data-section-item-number">
+						{{permitTotal}}
+					</view>
+					<view class="data-section-item-text">
+						请假
+					</view>
+				</view>
+				<view class="data-section-item">
+					<view class="data-section-item-number">
+						{{permitBackTotal}}
+					</view>
+					<view class="data-section-item-text">
+						销假
+					</view>
+				</view>
+				<view class="data-section-item">
+					<view class="data-section-item-number">
+						{{processTotal}}
+					</view>
+					<view class="data-section-item-text">
+						待批阅
+					</view>
+				</view>
+			</view>
+	  </view>
 
       <view class="menu-list">
         <view class="list-cell list-cell-arrow" @click="handleToEditInfo">
@@ -67,10 +89,10 @@
             <view>常见问题</view>
           </view>
         </view>
-        <view class="list-cell list-cell-arrow" @click="handleAbout">
+        <view class="list-cell list-cell-arrow" @click="handleTeam">
           <view class="menu-item-box">
-            <view class="iconfont icon-aixin menu-icon"></view>
-            <view>关于我们</view>
+            <view class="iconfont icon-friendfill menu-icon"></view>
+            <view>审核团队</view>
           </view>
         </view>
         <view class="list-cell list-cell-arrow" @click="handleToSetting">
@@ -79,6 +101,12 @@
             <view>应用设置</view>
           </view>
         </view>
+		<view class="list-cell list-cell-arrow" @click="handleToNotice">
+		  <view class="menu-item-box notice">
+		    <uni-icons type="notification" size="16"></uni-icons>
+		    <view>消息中心</view>
+		  </view>
+		</view>
       </view>
 
     </view>
@@ -86,8 +114,10 @@
 </template>
 
 <script>
-  import storage from '@/utils/storage'
+  import QQMap from "@/qqmap-wx-jssdk1.2/qqmap-wx-jssdk.js"
   import {getInfo,wechatBinding} from '@/api/system/user.js'
+  import { listPermit, listPermitBacklog, listPermitByDept } from '@/api/leave/ask_for_leave.js'
+  import {listBackPermit} from '@/api/leave/back_for_leave.js'
   
   export default {
     data() {
@@ -95,15 +125,54 @@
         name: this.$store.state.user.name,
         version: getApp().globalData.config.appInfo.version,
 		// 微信是否授权
-		wechatPermission: false
+		wechatPermission: false,
+		// 用户信息
+		userInfo: null,
+		// 位置经纬度
+		latitude: '',
+		longitude: '',
+		// 位置名称
+		locationName: '',
+		// 请假条数
+		permitTotal: 0,
+		// 销假条数
+		permitBackTotal: 0,
+		// 待批阅
+		processTotal: 0,
+		// 待办请求query
+		permitBacklogQuery:{
+			pageNum:1,
+			pageSize:5,
+			deptId: null,
+			userId: null
+		},
+		// 请假请求query
+		permitQuery:{
+			pageNum: 1,
+			pageSize: 10,
+			leaveStatus: null,
+			isBack: null,
+			permitType: null
+		},
+		//销假请求query
+		permitBackQuery:{
+			pageNum: 1,
+			pageSize: 10,
+			leaveStatus: 1,
+			isBack: 2,
+			permitType: null
+		}
       }
     },
 	async created() {
 		const res = await getInfo()
-		console.log(res);
+		this.userInfo = res
+		console.log(this.userInfo);
 		if(res.user.openId){
 			this.wechatPermission = true
 		}
+		this.getData()
+		this.getCurrentLocation()
 	},
     computed: {
       avatar() {
@@ -113,6 +182,15 @@
         return uni.getSystemInfoSync().windowHeight - 50
       }
     },
+	// 下拉刷新
+	onPullDownRefresh() {
+		console.log("刷新");
+		setTimeout(() => {
+			uni.stopPullDownRefresh()
+			this.getCurrentLocation()
+			this.getData()
+		},500)
+	},
     methods: {
       handleToInfo() {
         this.$tab.navigateTo('/pages/mine/info/index')
@@ -129,6 +207,9 @@
       handleToAvatar() {
         this.$tab.navigateTo('/pages/mine/avatar/index')
       },
+	  handleToNotice() {
+	    this.$tab.navigateTo('/pages/mine/notice/index')
+	  },
       handleLogout() {
         this.$modal.confirm('确定注销并退出系统吗？').then(() => {
           this.$store.dispatch('LogOut').then(() => {
@@ -137,17 +218,80 @@
         })
       },
       handleHelp() {
-        this.$tab.navigateTo('/pages/mine/help/index')
+        this.$modal.showToast('有问题去找辅导员哈~')
       },
-      handleAbout() {
-        this.$tab.navigateTo('/pages/mine/about/index')
+      handleTeam() {
+        this.$tab.navigateTo('/pages/mine/team/index')
       },
-      handleJiaoLiuQun() {
-        this.$modal.showToast('QQ群：①133713780、②146013835')
-      },
-      handleBuilding() {
-        this.$modal.showToast('模块建设中~')
-      },
+	  // 获取基本数据
+	  async getData(){
+		  if(this.userInfo.roles[0] == 'admin'){
+			  // 超级管理员
+			  const premitRes = await listPermit()
+			  this.permitTotal = premitRes.total
+			  
+			  const backRes = await listBackPermit({pageNum: 1,pageSize: 10},null,2)
+			  this.permitBackTotal = backRes.total
+			  
+			  const processRes = await listPermitBacklog(this.permitBacklogQuery)
+			  this.processTotal = processRes.total
+		  }else if(this.userInfo.roles[0] == 'director'){
+			  // 主任
+			  const premitRes = await listPermitByDept(
+					this.permitQuery,
+					this.userInfo.user.deptId,
+					null)
+			  this.permitTotal = premitRes.total
+			  
+			  const backRes = await listPermitByDept(
+				  this.permitBackQuery,
+				  this.userInfo.user.deptId,
+				  null)
+			  this.permitBackTotal = backRes.total
+			  
+			  this.permitBacklogQuery.deptId = this.userInfo.user.deptId
+			  const processRes = await listPermitBacklog(this.permitBacklogQuery)
+			  this.processTotal = processRes.total
+		  }else if(this.userInfo.roles[0] == 'counsellor'){
+			  // 辅导员
+			  const premitRes = await listPermitByDept(
+			  					this.permitQuery,
+			  					this.userInfo.user.dept.parentId,
+			  					null)
+			  this.permitTotal = premitRes.total
+			  
+			  const backRes = await listPermitByDept(
+			  				  this.permitBackQuery,
+			  				  this.userInfo.user.dept.parentId,
+			  				  null)
+			  this.permitBackTotal = backRes.total
+			  
+			  this.permitBacklogQuery.deptId = this.userInfo.user.dept.parentId
+			  const processRes = await listPermitBacklog(this.permitBacklogQuery)
+			  this.processTotal = processRes.total
+		  }else if(this.userInfo.roles[0] == 'student'){
+			  // 学生
+			  const premitRes = await listPermit({
+				  pageNum: 1,
+				  pageSize: 10,
+				  userId: this.userInfo.user.userId
+			  })
+			  this.permitTotal = premitRes.total
+			  
+			  const backRes = await listPermit({
+				  pageNum: 1,
+				  pageSize: 10,
+				  userId: this.userInfo.userId,
+				  leaveStatus: 1,
+				  isBack: 2
+			  })
+			  this.permitBackTotal = backRes.total
+			  
+			  this.permitBacklogQuery.userId = this.userInfo.user.userId
+			  const processRes = await listPermitBacklog(this.permitBacklogQuery)
+			  this.processTotal = processRes.total
+		  }
+	  },
 	  // 绑定微信
 	  wechatBinding(){
 		  uni.login({
@@ -169,7 +313,56 @@
 				console.log(err);
 			}
 		  })
-	  }
+	  },
+	  // 获取当前位置
+	  getCurrentLocation(){
+		  console.log("获取位置");
+		  uni.getLocation({
+		  	type: 'gcj02',
+		  	success: (res) => {
+		  		let latitude = res.latitude
+		  		let longitude = res.longitude
+		  		
+		  		this.latitude = latitude
+		  		this.longitude = longitude
+		  		
+		  		// 实例化API核心类
+		  		this.qqmap = new QQMap({
+		  			key: 'PMGBZ-SDYKQ-6VS5O-4P3HN-ZVT75-VCFOB'
+		  		})
+		  		
+		  		// 逆地址解析
+		  		this.qqmap.reverseGeocoder({
+		  			location: {
+		  				latitude: latitude,
+		  				longitude: longitude
+		  			},
+		  			success: (res) => {
+		  				this.locationName = res.result.address
+		  			},
+		  			fail: (res) => {
+		  				console.log(res);
+		  			}
+		  		})
+		  	},
+		  	fail: (res) => {
+		  		console.log(res);
+		  	}
+		  })
+	  },
+	  // 打开地图
+	  openLocation(index) {
+	  	uni.openLocation({
+	  		latitude: Number(this.latitude),
+	  		longitude: Number(this.longitude),
+	  		success: () => {
+	  			console.log('success');
+	  		},
+	  		fail: (res) => {
+	  			console.log(res);
+	  		}
+	  	})
+	  },
     }
   }
 </script>
@@ -235,18 +428,51 @@
         border-radius: 8px;
         background-color: white;
 
-        .action-item {
-          .icon {
-            font-size: 28px;
-          }
-
-          .text {
-            display: block;
-            font-size: 13px;
-            margin: 8px 0px;
-          }
-        }
+        .current-location{
+			display: flex;
+			align-items: center;
+			padding: 0 10px;
+			
+			.uni-icons{
+				color: #007AFF !important;
+				margin-right: 5px;
+			}
+			
+			.current-location-content{
+				height: 21px;
+			}
+		}
       }
     }
+	
+	.data-section{
+		.data-section-type{
+			margin: 15px 15px;
+			padding: 15px 0px;
+			border-radius: 8px;
+			background-color: white;
+			display: flex;
+			align-items: center;
+			justify-content: space-around;
+			
+			.data-section-item{
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				
+				.data-section-item-text{
+					margin-top: 5px;
+				}
+			}
+		}
+	}
+	
+	.notice{
+		.uni-icons{
+			color: #007AFF !important;
+			margin-right: 5px;
+		}
+	}
   }
 </style>
