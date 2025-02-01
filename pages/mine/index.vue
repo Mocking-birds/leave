@@ -173,6 +173,14 @@
 		}
 		this.getData()
 		this.getCurrentLocation()
+		
+		
+		// -----------------
+		// let params = parseFloat(this.latitude).toFixed(2)+','+parseFloat(this.longitude).toFixed(2)
+		// console.log('111');
+		// console.log(params);
+		// console.log(this.latitude);
+		
 	},
     computed: {
       avatar() {
@@ -319,7 +327,7 @@
 		  console.log("获取位置");
 		  uni.getLocation({
 		  	type: 'gcj02',
-		  	success: (res) => {
+		  	success: async (res) => {
 		  		let latitude = res.latitude
 		  		let longitude = res.longitude
 		  		

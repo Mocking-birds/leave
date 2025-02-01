@@ -50,7 +50,7 @@
 						<text class="uni-calendar__weeks-day-text">{{SATText}}</text>
 					</view>
 				</view>
-				<view class="uni-calendar__weeks" v-for="(item,weekIndex) in weeks" :key="weekIndex">
+				<view class="uni-calendar__weeks" v-for="(item,weekIndex) in weeks" :key="weekIndex" :class="[weekIndex == nowWeek?'active':'']">
 					<view class="uni-calendar__weeks-item" v-for="(weeks,weeksIndex) in item" :key="weeksIndex">
 						<calendar-item class="uni-calendar-item--hook" :weeks="weeks" :calendar="calendar" :selected="selected" :lunar="lunar" @change="choiceDate"></calendar-item>
 					</view>
@@ -139,7 +139,8 @@
 				weeks: [],
 				calendar: {},
 				nowDate: '',
-				aniMaskShow: false
+				aniMaskShow: false,
+				nowWeek: 0
 			}
 		},
 		computed:{
@@ -228,6 +229,22 @@
 				this.cale.setDate(date)
 				this.weeks = this.cale.weeks
 				this.nowDate = this.calendar = this.cale.getInfo(date)
+				
+				for (const key in this.weeks) {
+				  // 检查属性是否是对象自身的属性，而不是原型链上的属性
+				  if (this.weeks.hasOwnProperty(key)) {
+				    // 检查属性值是否是数组
+				    if (Array.isArray(this.weeks[key])) {
+				      // 遍历数组
+				      this.weeks[key].forEach(item => {
+				        if(item.fullDate == this.nowDate.fullDate){
+							this.nowWeek = key
+						}
+				      });
+				    }
+				    // 注意：这里我们没有处理非数组属性（如myMethod），因为它们不符合我们的条件
+				  }
+				}
 			},
 			/**
 			 * 打开日历弹窗

@@ -2,6 +2,7 @@ import tab from './tab'
 import auth from './auth'
 import modal from './modal'
 
+
 export default {
   install(Vue) {
     // 页签操作

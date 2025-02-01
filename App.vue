@@ -2,6 +2,7 @@
   import config from './config'
   import store from '@/store'
   import { getToken } from '@/utils/auth'
+  
 
   export default {
     onLaunch: function() {
@@ -30,5 +31,5 @@
 </script>
 
 <style lang="scss">
-  @import '@/static/scss/index.scss'
+  @import '@/static/scss/index.scss';
 </style>
