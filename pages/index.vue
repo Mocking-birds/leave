@@ -5,7 +5,9 @@
 				<uni-calendar :insert="true" :lunar="true" ref="calendar" @change="calendarChange" />
 			</view> -->
 			<!-- <calendar id="calendar"></calendar> -->
-			<uni-calendar :style="{ height: calendarStyle + 'px' }" :insert="true" :lunar="true" ref="calendar"  :selected="selected" @change="calendarChange"  style="width: 100%;height: 440px; transition: all .28s ease;"/>
+			<uni-calendar :style="{ height: calendarStyle + 'px' }" :insert="true" :lunar="true" ref="calendar"
+				:selected="selected" @change="calendarChange"
+				style="width: 100%;height: 440px; transition: all .28s ease;" />
 			<view class="calendar-icon">
 				<uni-icons :type="calendarIcon" size="25" style="transition: all .28s ease;"></uni-icons>
 			</view>
@@ -143,7 +145,7 @@
 				// 手势移动距离(0: 上滑，1: 下滑)
 				calendarMoveY: 0,
 				// 日历打点
-				selected:[]
+				selected: []
 			}
 		},
 		onLoad() {
@@ -157,20 +159,22 @@
 			console.log(this);
 		},
 		mounted() {
+			
 		},
 		methods: {
 			// 获取基本数据
 			async getData() {
-				
+
 				const userInfoData = await getInfo()
 				console.log(userInfoData);
-				
+
 				this.permitQuery.userId = userInfoData.user.userId
 				console.log(this.permitQuery);
-				
-				
+
+
 				const test = await listPermit(this.permitQuery)
 				console.log(test);
+				this.getSelected(test.rows)
 
 				const noticeRes = await getNoticeList()
 				// notice文本
@@ -259,37 +263,73 @@
 				console.log(e.touches[0].clientY - this.calendarStartY);
 				let num = e.touches[0].clientY - this.calendarStartY
 				console.log(this.calendarStyle += num);
-				if(440 + num <= 152){
+				if (440 + num <= 152) {
 					this.calendarStyle = 152
 					this.calendarMoveY = 0
-				}else if(152 + num >= 440){
+				} else if (152 + num >= 440) {
 					this.calendarStyle = 440
 					this.calendarMoveY = 1
-				}else{
+				} else {
 					this.calendarStyle = num + 152
-					if(num > 0){
+					if (num > 0) {
 						// 下滑
 						this.calendarMoveY = 0
-					}else{
+					} else {
 						// 上滑
 						this.calendarMoveY = 1
 					}
 				}
 			},
 			// 手势事件结束
-			calendarEnd(e){
+			calendarEnd(e) {
 				console.log(e);
 				console.log(this.calendarMoveY);
-				if(this.calendarMoveY == 0){
+				if (this.calendarMoveY == 0) {
 					this.calendarStyle = 440
 					this.calendarIcon = 'up'
-				}else{
+				} else {
 					this.calendarStyle = 152
 					this.calendarIcon = 'down'
 				}
 			},
 			calendarChange(e) {
 				console.log(e);
+			},
+			// 获取日历所有标记
+			getSelected(list) {
+				let arr = []
+				list.forEach((item,index) => {
+					arr[index] = this.transDateRange(item.startTime,item.endTime)
+				})
+				console.log(arr);
+				this.selected = arr.flat()
+				console.log(this.selected);
+			},
+			// 日期范围转换
+			transDateRange(startTime, endTime) {
+				const startDate = new Date(startTime); // 转换为 Date 对象
+				const endDate = new Date(endTime); // 转换为 Date 对象
+				const dateArray = []; // 存储结果的数组
+
+				// 循环从 startDate 到 endDate
+				while (startDate <= endDate) {
+					// 格式化日期为 YYYY-MM-DD
+					const year = startDate.getFullYear();
+					const month = String(startDate.getMonth() + 1).padStart(2, "0"); // 月份从 0 开始，需要 +1
+					const day = String(startDate.getDate()).padStart(2, "0");
+					const formattedDate = `${year}-${month}-${day}`;
+
+					// 将格式化后的日期存入数组
+					dateArray.push({
+						date: formattedDate,
+						info: '请假'
+					});
+
+					// 增加一天
+					startDate.setDate(startDate.getDate() + 1);
+				}
+				console.log(dateArray);
+				return dateArray;
 			},
 			// 获取天气图标
 			getWeatherIcon() {
