@@ -1,62 +1,63 @@
 <template>
 	<view class="content" @touchstart="calendarStart" @touchmove="calendarMove" @touchend="calendarEnd">
-		<view class="content">
-			<!-- 			<view class="calendar-box" :style="calendarStyle" style="min-height: 152px;height: 440px;">
-				<uni-calendar :insert="true" :lunar="true" ref="calendar" @change="calendarChange" />
-			</view> -->
-			<!-- <calendar id="calendar"></calendar> -->
-			<uni-calendar :style="{ height: calendarStyle + 'px' }" :insert="true" :lunar="true" ref="calendar"
+			<uni-calendar :insert="true" :lunar="true" ref="calendar"
 				:selected="selected" @change="calendarChange"
 				style="width: 100%;height: 440px; transition: all .28s ease;" />
-			<view class="calendar-icon">
-				<uni-icons :type="calendarIcon" size="25" style="transition: all .28s ease;"></uni-icons>
-			</view>
-			<scroll-view class="other" :scroll-y="scrollType" scroll-top="0" enable-flex="true"
-				style="min-height: 200px;" @scroll="otherScroll">
-				<swiper class="swiper" circular :autoplay="true" :interval="2000" :indicator-dots='true'
-					indicator-color='white' :duration="500">
-					<swiper-item>
-						<view class="swiper-item uni-bg-red" style="background-color: palevioletred;">A</view>
-					</swiper-item>
-					<swiper-item>
-						<view class="swiper-item uni-bg-green" style="background-color: aqua;">B</view>
-					</swiper-item>
-					<swiper-item>
-						<view class="swiper-item uni-bg-blue" style="background-color: aquamarine;">C</view>
-					</swiper-item>
-				</swiper>
-
-				<uni-notice-bar :scrollable="true" :single="true" :showIcon="true" :speed="100" :text="text"
-					width="100%"></uni-notice-bar>
-
-				<view class="weather" v-if="weatherInfo">
-					<view class="top">
-						<image :src="getWeatherIcon()" mode=""></image>
-						<view class="wea-text-tem">
-							<view class="wea-text">
-								{{ weatherInfo.text }}
-							</view>
-							<view class="wea-tem">
-								{{ weatherInfo.temp }}℃
-							</view>
-						</view>
-					</view>
-					<view class="bottom">
-						<view class="wind-dir">
-							<uni-icons type="paperplane" size="20"></uni-icons>
-							<view class="">
-								{{ weatherInfo.windDir }}
-							</view>
-						</view>
-						<view class="province">
-							<uni-icons type="location" size="20"></uni-icons>
-							<view class="">
-								{{ locationName }}
-							</view>
-						</view>
-					</view>
+			<view class="calendar-other" :style="{ transform: `translateY(${calendarStyle}px)` }">
+				<view class="calendar-icon">
+					<uni-icons :type="calendarIcon" size="25" style="transition: all .28s ease;"></uni-icons>
 				</view>
-			</scroll-view>
+				<scroll-view class="other" :scroll-y="true" scroll-top="0" enable-flex="true"
+					style="min-height: 200px; max-height: 600px;" @scroll="otherScroll">
+					<swiper class="swiper" circular :autoplay="true" :interval="2000" :indicator-dots='true'
+						indicator-color='white' :duration="500">
+						<swiper-item>
+							<view class="swiper-item uni-bg-red" style="background-color: palevioletred;">A</view>
+						</swiper-item>
+						<swiper-item>
+							<view class="swiper-item uni-bg-green" style="background-color: aqua;">B</view>
+						</swiper-item>
+						<swiper-item>
+							<view class="swiper-item uni-bg-blue" style="background-color: aquamarine;">C</view>
+						</swiper-item>
+					</swiper>
+				
+					<uni-notice-bar :scrollable="true" :single="true" :showIcon="true" :speed="100" :text="text"
+						width="100%"></uni-notice-bar>
+				
+					<view class="weather" v-if="weatherInfo">
+						<view class="weather-content">
+							<view class="top">
+								<image :src="getWeatherIcon()" mode=""></image>
+								<view class="wea-text-tem">
+									<view class="wea-text">
+										{{ weatherInfo.text }}
+									</view>
+									<view class="wea-tem">
+										{{ weatherInfo.temp }}℃
+									</view>
+								</view>
+							</view>
+							<view class="bottom">
+								<view class="wind-dir">
+									<uni-icons type="paperplane" size="20"></uni-icons>
+									<view class="">
+										{{ weatherInfo.windDir }}
+									</view>
+								</view>
+								<view class="province">
+									<uni-icons type="location" size="20"></uni-icons>
+									<view class="">
+										{{ locationName }}
+									</view>
+								</view>
+							</view>
+						</view>
+					</view>
+					<view class="test">
+						
+					</view>
+				</scroll-view>
 		</view>
 	</view>
 </template>
@@ -139,7 +140,7 @@
 				// 滑动情况
 				scrollType: true,
 				// 日历height伸缩
-				calendarStyle: 440,
+				calendarStyle: 0,
 				// 手势触碰strat
 				calendarStartY: 0,
 				// 手势移动距离(0: 上滑，1: 下滑)
@@ -250,6 +251,7 @@
 			},
 			// 日历下其他部分发生滚动
 			otherScroll(e) {
+				e.stopPropagation()
 				console.log(e);
 			},
 			// 手势事件触碰开始
@@ -259,38 +261,38 @@
 			},
 			// 手势事件移动
 			calendarMove(e) {
-				console.log(e);
-				console.log(e.touches[0].clientY - this.calendarStartY);
+				// console.log(e);
+				// console.log(e.touches[0].clientY - this.calendarStartY);
+
 				let num = e.touches[0].clientY - this.calendarStartY
-				console.log(this.calendarStyle += num);
-				if (440 + num <= 152) {
-					this.calendarStyle = 152
-					this.calendarMoveY = 0
-				} else if (152 + num >= 440) {
-					this.calendarStyle = 440
-					this.calendarMoveY = 1
-				} else {
-					this.calendarStyle = num + 152
-					if (num > 0) {
-						// 下滑
-						this.calendarMoveY = 0
-					} else {
-						// 上滑
-						this.calendarMoveY = 1
+				// console.log(this.calendarStyle += num);
+				
+				if(this.calendarIcon == 'up'){
+					// 可以上拉
+					if( num <= -285){
+						this.calendarStyle = -285
+						this.calendarIcon = 'down'
+					}else if(num > 0){
+						this.calendarStyle = 0
+					}else{
+						this.calendarStyle = num
+					}
+				}else if(this.calendarIcon == 'down'){
+					// 可以下滑
+					if(num >= 285){
+						this.calendarStyle = 0
+						this.calendarIcon = 'up'
+					}else if(num < 0){
+						this.calendarStyle = -285
+					}else{
+						this.calendarStyle = num - 285
 					}
 				}
+				
 			},
 			// 手势事件结束
 			calendarEnd(e) {
-				console.log(e);
-				console.log(this.calendarMoveY);
-				if (this.calendarMoveY == 0) {
-					this.calendarStyle = 440
-					this.calendarIcon = 'up'
-				} else {
-					this.calendarStyle = 152
-					this.calendarIcon = 'down'
-				}
+				console.log('结束');
 			},
 			calendarChange(e) {
 				console.log(e);
@@ -431,6 +433,7 @@
 	.content {
 		width: 100%;
 		height: 100vh;
+		overflow: hidden;
 	}
 
 	.weather {
@@ -490,20 +493,29 @@
 		overflow: hidden;
 	}
 
-	.calendar-icon {
+	.calendar-other {
 		width: 100%;
 		background-color: white;
+		z-index: 99;
+	}
+	
+	.calendar-icon{
+		width: 100%;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		z-index: 99;
 	}
 
 	.other {
 		width: 100%;
 		display: flex;
-		justify-content: center;
 		align-items: center;
 		flex-direction: column;
+	}
+	
+	.test{
+		height: 400px;
+		width: 100%;
+		background-color: white;
 	}
 </style>
