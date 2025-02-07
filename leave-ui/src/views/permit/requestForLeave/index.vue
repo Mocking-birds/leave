@@ -102,11 +102,11 @@
           <span>{{ parseTime(scope.row.permitTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="销假时间" align="center" prop="backTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.backTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="销假时间" align="center" prop="backTime" width="180">-->
+<!--        <template slot-scope="scope">-->
+<!--          <span>{{ parseTime(scope.row.backTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button

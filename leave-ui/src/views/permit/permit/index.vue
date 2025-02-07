@@ -11,30 +11,30 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="请假理由" prop="reason">
-        <el-input
-          v-model="queryParams.reason"
-          placeholder="请输入请假理由"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="起始日期" prop="startTime">
-        <el-date-picker clearable
-          v-model="queryParams.startTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择起始日期">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="结束日期" prop="endTime">
-        <el-date-picker clearable
-          v-model="queryParams.endTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择结束日期">
-        </el-date-picker>
-      </el-form-item>
+<!--      <el-form-item label="请假理由" prop="reason">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.reason"-->
+<!--          placeholder="请输入请假理由"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="起始日期" prop="startTime">-->
+<!--        <el-date-picker clearable-->
+<!--          v-model="queryParams.startTime"-->
+<!--          type="date"-->
+<!--          value-format="yyyy-MM-dd"-->
+<!--          placeholder="请选择起始日期">-->
+<!--        </el-date-picker>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="结束日期" prop="endTime">-->
+<!--        <el-date-picker clearable-->
+<!--          v-model="queryParams.endTime"-->
+<!--          type="date"-->
+<!--          value-format="yyyy-MM-dd"-->
+<!--          placeholder="请选择结束日期">-->
+<!--        </el-date-picker>-->
+<!--      </el-form-item>-->
       <el-form-item label="是否销假" prop="isBack">
         <el-select v-model="queryParams.isBack" placeholder="请选择请假状态" clearable>
           <el-option
@@ -55,22 +55,22 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="请假时间" prop="permitTime">
-        <el-date-picker clearable
-          v-model="queryParams.permitTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择请假时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="销假时间" prop="backTime">
-        <el-date-picker clearable
-          v-model="queryParams.backTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择销假时间">
-        </el-date-picker>
-      </el-form-item>
+<!--      <el-form-item label="请假时间" prop="permitTime">-->
+<!--        <el-date-picker clearable-->
+<!--          v-model="queryParams.permitTime"-->
+<!--          type="date"-->
+<!--          value-format="yyyy-MM-dd"-->
+<!--          placeholder="请选择请假时间">-->
+<!--        </el-date-picker>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="销假时间" prop="backTime">-->
+<!--        <el-date-picker clearable-->
+<!--          v-model="queryParams.backTime"-->
+<!--          type="date"-->
+<!--          value-format="yyyy-MM-dd"-->
+<!--          placeholder="请选择销假时间">-->
+<!--        </el-date-picker>-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -197,11 +197,11 @@
     />
 
     <!-- 添加或修改假条信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="740px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户id" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户id" />
-        </el-form-item>
+<!--        <el-form-item label="用户id" prop="userId">-->
+<!--          <el-input v-model="form.userId" placeholder="请输入用户id" />-->
+<!--        </el-form-item>-->
         <el-form-item label="请假类型" prop="permitType">
           <el-select v-model="form.permitType" placeholder="请选择请假类型">
             <el-option

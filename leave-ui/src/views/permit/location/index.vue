@@ -1,30 +1,30 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="假条id" prop="leaveId">
-        <el-input
-          v-model="queryParams.leaveId"
-          placeholder="请输入假条id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="纬度" prop="latitude">
-        <el-input
-          v-model="queryParams.latitude"
-          placeholder="请输入纬度"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="经度" prop="longitude">
-        <el-input
-          v-model="queryParams.longitude"
-          placeholder="请输入经度"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="假条id" prop="leaveId">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.leaveId"-->
+<!--          placeholder="请输入假条id"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="纬度" prop="latitude">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.latitude"-->
+<!--          placeholder="请输入纬度"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="经度" prop="longitude">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.longitude"-->
+<!--          placeholder="请输入经度"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item label="位置名称" prop="locationName">
         <el-input
           v-model="queryParams.locationName"
@@ -126,7 +126,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -138,9 +138,9 @@
     <!-- 添加或修改位置信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="假条id" prop="leaveId">
-          <el-input v-model="form.leaveId" placeholder="请输入假条id" />
-        </el-form-item>
+<!--        <el-form-item label="假条id" prop="leaveId">-->
+<!--          <el-input v-model="form.leaveId" placeholder="请输入假条id" />-->
+<!--        </el-form-item>-->
         <el-form-item label="纬度" prop="latitude">
           <el-input v-model="form.latitude" placeholder="请输入纬度" />
         </el-form-item>
