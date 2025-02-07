@@ -251,7 +251,7 @@
 			},
 			// 日历下其他部分发生滚动
 			otherScroll(e) {
-				e.stopPropagation()
+				// e.stopPropagation()	
 				console.log(e);
 			},
 			// 手势事件触碰开始
@@ -261,9 +261,6 @@
 			},
 			// 手势事件移动
 			calendarMove(e) {
-				// console.log(e);
-				// console.log(e.touches[0].clientY - this.calendarStartY);
-
 				let num = e.touches[0].clientY - this.calendarStartY
 				// console.log(this.calendarStyle += num);
 				
@@ -293,6 +290,13 @@
 			// 手势事件结束
 			calendarEnd(e) {
 				console.log('结束');
+				if(this.calendarIcon == 'up' && this.calendarStyle != 0){
+					this.calendarStyle = -285
+					this.calendarIcon = 'down'
+				}else if(this.calendarIcon == 'down' && this.calendarStyle != -285){
+					this.calendarStyle = 0
+					this.calendarIcon = 'up'
+				}
 			},
 			calendarChange(e) {
 				console.log(e);
@@ -497,6 +501,7 @@
 		width: 100%;
 		background-color: white;
 		z-index: 99;
+		transition: all .08s linear; 
 	}
 	
 	.calendar-icon{
