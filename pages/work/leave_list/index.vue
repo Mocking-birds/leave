@@ -15,7 +15,7 @@
 					</view>
 				</view>
 				<view class="request-time">
-					申请时间：{{type == '请假申请'?item.permitTime:item.backTime}}
+					申请时间：{{useTime(item)}}
 				</view>
 
 				<view class="reason" v-if="item.leaveStatus == '0'">
@@ -214,16 +214,30 @@
 			},
 			// 审核提示
 			auditReminder(item) {
+				console.log(item);
 				if (item.leaveStatus == '0') {
 					return '审批中'
 				} else if (item.leaveStatus == '2') {
 					return '审批拒绝'
 				} else if (item.leaveStatus == '1' && item.isBack == '0') {
-					return '审批通过'
+					return '请假审批通过'
 				} else if (item.leaveStatus == '1' && item.isBack == '1') {
-					return '审批通过'
+					return '销假审批通过'
 				} else if (item.leaveStatus == '1' && item.isBack == '2') {
 					return '审批中'
+				}
+			},
+			// 判断用哪个申请时间
+			useTime(item){
+				console.log(item);
+				if(item.leaveStatus == '0' || item.leaveStatus == '2'){
+					return item.permitTime
+				}else if(item.leaveStatus == '1' && item.isBack == '0'){
+					return item.permitTime
+				}else if(item.leaveStatus == '1' && item.isBack == '1'){
+					return item.backTime
+				}else if(item.leaveStatus == '1' && item.isBack == '2'){
+					return item.backTime
 				}
 			},
 			// 滚动到底部后继续渲染直到没有数据为止
