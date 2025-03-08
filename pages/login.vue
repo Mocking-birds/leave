@@ -176,12 +176,12 @@
 			// 微信登录
 			wechatLogin(e) {
 				this.$modal.loading("登录中，请耐心等待...")
-				
 				uni.login({
 					provider: 'weixin',
 					"onlyAuthorize": true,
 					success:(e)=>{
 						console.log(e);
+						console.log(this);
 						this.$store.dispatch('WechatLogin',e.code).then(() => {
 							this.$modal.closeLoading()
 							this.loginSuccess()
@@ -191,6 +191,8 @@
 						console.log(err);
 					}
 				})
+				
+				
 			},
 			// 点击手机登录
 			phoneLogin(){

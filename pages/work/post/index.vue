@@ -1,19 +1,23 @@
 <template>
-	<view>
-		<uni-list :border="true">
-			<uni-list-item v-for="(item,index) in postList" :key="index" :avatar="false" clickable
-				:title="item.postName" :note="item.postCode">
-				<template v-slot:footer>
-					<view class="item-button" style="display:flex; justify-content: center;align-items: center;">
-						<button size="mini" type="primary" @click="fabClick(item)">修改</button>
-						<button size="mini" type="warn" @click="deletePost(item.postId)">删除</button>
-					</view>
-				</template>
-			</uni-list-item>
-		</uni-list>
-
+	<scroll-view style="height:100vh;background-color: rgb(241,245,249);position: relative;" scroll-y="true"
+		scroll-top="0" enable-flex="true" lower-threshold="50">
+		<view class="header-section">
+		</view>
+		<view class="post-box">
+			<view class="post-list" v-for="(item,index) in postList" :key="index">
+				<uni-section :title="`岗位: ${item.postName}`" type="circle"></uni-section>
+				<view class="code">
+					岗位编码：{{item.postCode}}
+				</view>
+				<view class="right">
+					<uni-icons size="30" type="compose" class="edit" @click="fabClick(item)"></uni-icons>
+					<uni-icons size="30" type="trash" class="delete" @click="deletePost(item.postId)"></uni-icons>
+				</view>
+			</view>
+		</view>
+		
 		<uni-popup ref='postPopup' type='center' background-color="#fff">
-			<view style="max-height: 350px; overflow: scroll;">
+			<view class="popup" style="max-height: 550px; overflow: scroll;">
 				<view class='title'>
 					{{submitSign}}岗位
 				</view>
@@ -44,10 +48,10 @@
 		<uni-popup ref="message" type="message">
 			<uni-popup-message :type="msgType" :message="messageText" :duration="2000"></uni-popup-message>
 		</uni-popup>
-
+		
 		<uni-fab ref="fab" :pattern="pattern" :horizontal="left" :vertical="bottom" :direction="horizontal"
 			@fabClick="fabClick()" />
-	</view>
+	</scroll-view>
 </template>
 
 <script>
@@ -171,10 +175,84 @@
 	}
 </script>
 
-<style>
-	uni-list-item {
-		padding: 5px 0;
+<style lang="scss">
+	.header-section {
+		width: 100%;
+		height: 200px;
+		background-color: #261c3f;
+		border-bottom-left-radius: 50px 10px;
+		border-bottom-right-radius: 50px 10px;
 	}
+	
+	.post-box{
+		width: 90%;
+		position: absolute;
+		top: 50px;
+		left: 0;
+		right: 0;
+		margin: 0 auto;
+		
+		.post-list{
+			width: 100%;
+			border: 1px solid #fff;
+			border-radius: 15px;
+			background-color: #fff;
+			padding: 25px 10px;
+			margin-bottom: 20px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: space-between;
+			position: relative;
+			
+			uni-section{
+				width: 90%;
+				
+				.uni-section-header__decoration {
+					background-color: #f4a042 !important;
+				}
+				
+				.uni-section__content-title {
+					font-size: 18px !important;
+					font-weight: 600;
+				}
+			}
+			
+			.code{
+				width: 80%;
+			}
+			
+		}
+		
+		.right{
+			position: absolute;
+			right: 25px;
+			top: 50px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			
+			.edit{
+				padding-right: 10px;
+				
+				.uniui-compose{
+					color:#86CDEA !important;
+				}
+			}
+			
+			.delete{
+				.uniui-trash{
+					color: red !important;
+				}
+			}
+		}
+	}
+	
+	.uni-popup__wrapper{
+		border-radius: 15px;
+	}
+	
+
 
 	.item-button button {
 		margin: 0 5px;
