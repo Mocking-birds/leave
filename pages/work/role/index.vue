@@ -1,6 +1,9 @@
 <template>
-	<view>
-		<uni-list :border="true">
+	<scroll-view style="height:100vh;background-color: rgb(241,245,249);position: relative;" scroll-y="true"
+		scroll-top="0" enable-flex="true" lower-threshold="50">
+		<view class="header-section">
+		</view>
+		<!-- <uni-list :border="true">
 			<uni-list-item v-for="(item,index) in roleList" :key="index" :avatar="false" clickable
 				:title="item.roleName" :note="item.roleKey">
 				<template v-slot:footer>
@@ -10,10 +13,23 @@
 					</view>
 				</template>
 			</uni-list-item>
-		</uni-list>
-
+		</uni-list> -->
+		
+		<view class="role-box">
+			<view class="role-list" v-for="(item,index) in roleList" :key="index">
+				<uni-section :title="`角色名称：${item.roleName}`" type="circle"></uni-section>
+				<view class="roleKey">
+					{{item.roleKey}}
+				</view>
+				<view class="right">
+					<uni-icons size="30" type="compose" class="edit" @click="fabClick(item)"></uni-icons>
+					<uni-icons size="30" type="trash" class="delete" @click="deleteRole(item.roleId)"></uni-icons>
+				</view>
+			</view>
+		</view>
+		
 		<uni-popup ref='rolePopup' type='center' background-color="#fff">
-			<view style="max-height: 350px; overflow: scroll;">
+			<view style="max-height: 550px; overflow: scroll;">
 				<view class='title'>
 					{{submitSign}}角色
 				</view>
@@ -45,14 +61,14 @@
 				</view>
 			</view>
 		</uni-popup>
-
+		
 		<uni-popup ref="message" type="message">
 			<uni-popup-message :type="msgType" :message="messageText" :duration="2000"></uni-popup-message>
 		</uni-popup>
-
+		
 		<uni-fab ref="fab" :pattern="pattern" :horizontal="left" :vertical="bottom" :direction="horizontal"
 			@fabClick="fabClick()" />
-	</view>
+	</scroll-view>
 </template>
 
 <script>
@@ -158,9 +174,81 @@
 	}
 </script>
 
-<style>
-	uni-list-item {
-		padding: 5px 0;
+<style lang="scss">
+	
+	.header-section {
+		width: 100%;
+		height: 200px;
+		background-color: #261c3f;
+		border-bottom-left-radius: 50px 10px;
+		border-bottom-right-radius: 50px 10px;
+	}
+	
+	.role-box{
+		width: 90%;
+		position: absolute;
+		top: 50px;
+		left: 0;
+		right: 0;
+		margin: 0 auto;
+		
+		.role-list{
+			width: 100%;
+			border: 1px solid #fff;
+			border-radius: 15px;
+			background-color: #fff;
+			padding: 25px 10px;
+			margin-bottom: 20px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: space-between;
+			position: relative;
+			
+			uni-section{
+				width: 90%;
+				
+				.uni-section-header__decoration {
+					background-color: #f4a042 !important;
+				}
+				
+				.uni-section__content-title {
+					font-size: 18px !important;
+					font-weight: 600;
+				}
+			}
+			
+			.roleKey{
+				width: 80%;
+				color: #9e9e9e;
+			}
+			
+			.right{
+				position: absolute;
+				right: 25px;
+				top: 50px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				
+				.edit{
+					padding-right: 10px;
+					
+					.uniui-compose{
+						color:#86CDEA !important;
+					}
+				}
+				
+				.delete{
+					.uniui-trash{
+						color: red !important;
+					}
+				}
+			}
+			
+		}
+		
+		
 	}
 
 	.item-button button {
@@ -199,5 +287,10 @@
 		height: 100%;
 		display: flex;
 		align-items: center;
+	}
+	
+	.uni-popup__wrapper{
+		border-radius: 15px;
+		width: 350px;
 	}
 </style>

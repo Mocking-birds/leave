@@ -220,6 +220,7 @@
 			
 			.code{
 				width: 80%;
+				color: #9e9e9e;
 			}
 			
 		}
@@ -250,6 +251,7 @@
 	
 	.uni-popup__wrapper{
 		border-radius: 15px;
+		width: 350px;
 	}
 	
 
