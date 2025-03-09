@@ -1,22 +1,23 @@
 <template>
-	<view style="height: 100vh;">
-		<uni-segmented-control :current="0" :values="items" style-type="button"
-							 active-color="#007aff" @clickItem="onClickItem" />
-							
-		<uni-list :border="true">
-			<uni-list-item v-for="(item,index) in noticeTab()" :key="index" :avatar="false" clickable
-				:title="item.noticeContent" :note="item.noticeTitle">
-				<template v-slot:footer>
-					<view class="item-button" style="display:flex; justify-content: center;align-items: center;">
-						<button size="mini" type="primary" @click="fabClick(item)">修改</button>
-						<button size="mini" type="warn" @click="deleteNotice(item.noticeId)">删除</button>
-					</view>
-				</template>
-			</uni-list-item>
-		</uni-list>
-
+	<scroll-view style="height:100vh;background-color: rgb(241,245,249);position: relative;" scroll-y="true"
+		scroll-top="0" enable-flex="true" lower-threshold="50">
+		<view class="header-section">
+		</view>
+		<view class="notice-box">
+			<view class="notice-list" v-for="(item,index) in allNoticeList" :key="index">
+				<uni-section :title="getNoticeType(item)" type="circle"></uni-section>
+				<view class="content">
+					{{item.noticeContent}}
+				</view>
+				<view class="right">
+					<uni-icons size="30" type="compose" class="edit" @click="fabClick(item)"></uni-icons>
+					<uni-icons size="30" type="trash" class="delete" @click="deletePost(item.postId)"></uni-icons>
+				</view>
+			</view>
+		</view>
+		
 		<uni-popup ref='noticePopup' type='center' background-color="#fff">
-			<view style="max-height: 350px; overflow: scroll;">
+			<view style="max-height: 550px; overflow: scroll;">
 				<view class='title'>
 					{{submitSign}}公告
 				</view>
@@ -41,14 +42,33 @@
 				</view>
 			</view>
 		</uni-popup>
-
+		
 		<uni-popup ref="message" type="message">
 			<uni-popup-message :type="msgType" :message="messageText" :duration="2000"></uni-popup-message>
 		</uni-popup>
-
+		
 		<uni-fab ref="fab" :pattern="pattern" :horizontal="left" :vertical="bottom" :direction="horizontal"
 			@fabClick="fabClick()" />
-	</view>
+	</scroll-view>
+	
+	<!-- <view style="height: 100vh;">
+		<uni-segmented-control :current="0" :values="items" style-type="button"
+							 active-color="#007aff" @clickItem="onClickItem" />
+							
+		<uni-list :border="true">
+			<uni-list-item v-for="(item,index) in noticeTab()" :key="index" :avatar="false" clickable
+				:title="item.noticeContent" :note="item.noticeTitle">
+				<template v-slot:footer>
+					<view class="item-button" style="display:flex; justify-content: center;align-items: center;">
+						<button size="mini" type="primary" @click="fabClick(item)">修改</button>
+						<button size="mini" type="warn" @click="deleteNotice(item.noticeId)">删除</button>
+					</view>
+				</template>
+			</uni-list-item>
+		</uni-list>
+
+		
+	</view> -->
 </template>
 
 <script>
@@ -96,7 +116,13 @@
 				},
 
 				// 公告类型列表
-				noticeTypeList: [],
+				noticeTypeList: [{
+					value: '1',
+					text: "通知"
+				},{
+					value: '2',
+					text: "公告"
+				}],
 
 				// 状态列表
 				statusList: [{
@@ -116,13 +142,7 @@
 				messageText:'',
 				
 				//修改添加标识
-				submitSign:'',
-				
-				// 分段器
-				items:["全部"],
-				
-				//公告index
-				noticeIndex: 0
+				submitSign:''
 			}
 		},
 		methods: {
@@ -132,36 +152,8 @@
 					pageNum: this.pageNum,
 					pageSize: this.pageSize
 				})
-				
-				//全部公告列表
 				this.allNoticeList = res.rows
-				
-				//通知列表
-				this.notifyList = this.allNoticeList.filter(item => item.noticeType == 2)
-				
-				//公告列表
-				this.noticeList = this.allNoticeList.filter(item => item.noticeType == 1)
-				
-				// console.log(res);
-				// console.log(a);
 				console.log(this.allNoticeList);
-				console.log(this.notifyList);
-				console.log(this.noticeList);
-			},
-
-			//获取公告类型列表
-			async getNoticeType() {
-				const res = await getDicts("sys_notice_type")
-
-				// noticeTypeList
-				res.data.forEach((item, index) => {
-					this.noticeTypeList[index] = {
-						value: item.dictValue,
-						text: item.dictLabel
-					}
-					this.items[index+1] = item.dictLabel
-				})
-
 			},
 
 			// 悬浮按钮点击事件
@@ -214,34 +206,98 @@
 				this.$refs.noticePopup.close()
 			},
 			
-			//根据分段器替换数组
-			noticeTab(){
-				if(this.noticeIndex == 0){
-					return this.allNoticeList
-				}else if(this.noticeIndex == 1){
-					return this.notifyList
-				}else if(this.noticeIndex == 2){
-					return this.noticeList
+			// 返回公告类型
+			getNoticeType(item){
+				if(item.noticeType == 1){
+					return '通知：'+item.noticeTitle
+				}else if(item.noticeType == 2){
+					return '公告：'+item.noticeTitle
 				}
-			},
-			
-			//点击分段器
-			onClickItem(e){
-				this.noticeIndex = e.currentIndex
-				this.noticeTab()
-				
 			}
 		},
 		created() {
 			this.getNotice()
-			this.getNoticeType()
 		}
 	}
 </script>
 
-<style>
-	uni-list-item {
-		padding: 10px 0;
+<style lang="scss">
+	.header-section {
+		width: 100%;
+		height: 200px;
+		background-color: #261c3f;
+		border-bottom-left-radius: 50px 10px;
+		border-bottom-right-radius: 50px 10px;
+	}
+	
+	.notice-box{
+		width: 90%;
+		position: absolute;
+		top: 50px;
+		left: 0;
+		right: 0;
+		margin: 0 auto;
+		
+		.notice-list{
+			width: 100%;
+			border: 1px solid #fff;
+			border-radius: 15px;
+			background-color: #fff;
+			padding: 25px 5px;
+			margin-bottom: 20px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: space-between;
+			position: relative;
+			
+			uni-section{
+				width: 90%;
+				
+				.uni-section-header__decoration {
+					background-color: #f4a042 !important;
+				}
+				
+				.uni-section__content-title {
+					font-size: 18px !important;
+					font-weight: 600;
+				}
+			}
+			
+			.content{
+				width: 80%;
+				color: #9e9e9e;
+			}
+			
+		}
+		
+		.right{
+			position: absolute;
+			right: 25px;
+			top: 70px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			
+			.edit{
+				padding-right: 10px;
+				
+				.uniui-compose{
+					color:#86CDEA !important;
+				}
+			}
+			
+			.delete{
+				.uniui-trash{
+					color: red !important;
+				}
+			}
+		}
+	}
+	
+	.uni-popup__wrapper{
+		border-radius: 15px;
+		width: 350px;
 	}
 
 	.item-button button {
@@ -275,7 +331,4 @@
 		padding: 0 15px;
 	}
 	
-	/* .segmented-control__item segmented-control__item--button{
-		background: #fff !important;
-	} */
 </style>

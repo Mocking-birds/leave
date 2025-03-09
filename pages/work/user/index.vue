@@ -1,11 +1,27 @@
 <template>
-	<view>
-		<uni-list :border="true">
-			<uni-list-chat v-for="(item,index) in userList" :key="index" clickable @click="getOne(item.userId)"
-				:title="item.userName" :avatar="baseUrl+item.avatar" :note="item.roles[0].roleName"></uni-list-chat>
-		</uni-list>
+	<scroll-view style="height:100vh;background-color: rgb(241,245,249);position: relative;" scroll-y="true"
+		scroll-top="0" enable-flex="true" lower-threshold="50">
+		<view class="header-section">
+			
+		</view>
+		<view class="user-box">
+			<view class="user-list" v-for="(item,index) in userList" :key="index" @click="getOne(item.userId)">
+				<view class="left">
+					<image :src="baseUrl+item.avatar" mode="aspectFit"></image>
+				</view>
+				<view class="right">
+					<view class="user-name">
+						{{item.userName}}
+					</view>
+					<view class="role-name">
+						{{item.roles[0].roleName}}
+					</view>
+				</view>
+			</view>
+		</view>
+		
 		<uni-popup ref='popup' type='center' background-color="#fff">
-			<view style="max-height: 350px; overflow: scroll;">
+			<view style="max-height: 550px; overflow: scroll;">
 				<view class='title'>
 					修改用户信息
 				</view>
@@ -48,7 +64,15 @@
 		<uni-popup ref="error" type='center'>
 			<uni-popup-message type="error" message="无法修改超级管理员的信息" :duration="2000"></uni-popup-message>
 		</uni-popup>
-	</view>
+	</scroll-view>
+	
+<!-- 	<view>
+		<uni-list :border="true">
+			<uni-list-chat v-for="(item,index) in userList" :key="index" clickable @click="getOne(item.userId)"
+				:title="item.userName" :avatar="baseUrl+item.avatar" :note="item.roles[0].roleName"></uni-list-chat>
+		</uni-list>
+		
+	</view> -->
 </template>
 
 <script>
@@ -179,7 +203,71 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
+	.header-section {
+		width: 100%;
+		height: 200px;
+		background-color: #261c3f;
+		border-bottom-left-radius: 50px 10px;
+		border-bottom-right-radius: 50px 10px;
+	}
+	
+	.user-box{
+		width: 90%;
+		position: absolute;
+		top: 50px;
+		left: 0;
+		right: 0;
+		margin: 0 auto;
+		
+		.user-list{
+			width: 100%;
+			border: 1px solid #fff;
+			border-radius: 15px;
+			background-color: #fff;
+			padding: 25px 20px;
+			margin-bottom: 20px;
+			display: flex;
+			// flex-direction: column;
+			align-items: center;
+			justify-content: space-between;
+			position: relative;
+			
+			uni-section{
+				width: 90%;
+				
+				.uni-section-header__decoration {
+					background-color: #f4a042 !important;
+				}
+				
+				.uni-section__content-title {
+					font-size: 18px !important;
+					font-weight: 600;
+				}
+			}
+			
+			.left{
+				image{
+					width: 50px;
+					height: 50px;
+				}
+			}
+			
+			.right{
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				padding-left: 50px;
+			}
+		}
+	}
+	
+	.uni-popup__wrapper{
+		border-radius: 15px;
+		width: 350px;
+	}
+	
 	.uni-list-chat__container {
 		padding: 20px 15px !important;
 	}
