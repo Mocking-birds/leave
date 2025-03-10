@@ -206,7 +206,6 @@ public class SysLoginService
         Map<String, Integer> map = new HashMap<>();
         map.put("code",captcha);
 
-        System.out.println("map:"+ JSONUtil.toJsonStr(map));
 
         try{
             SendSmsRequest sendSmsRequest = new SendSmsRequest()
@@ -239,7 +238,6 @@ public class SysLoginService
      */
     public String phoneLogin(LoginBody loginBody) throws Exception {
         Object storedCaptcha = redisTemplate.opsForValue().get(loginBody.getPhonenumber());
-        System.out.println("storedCaptcha:"+storedCaptcha);
         String storeCaptcha = storedCaptcha.toString();
         if(storeCaptcha != null && storeCaptcha.equals(loginBody.getSmsCode())){
             SysUser user = userService.selectUserByPhone(loginBody.getPhonenumber());
@@ -248,8 +246,6 @@ public class SysLoginService
             recordLoginInfo(loginUser.getUserId());
             return tokenService.createToken(loginUser);
         }else {
-            System.out.println("smscode:"+loginBody.getSmsCode());
-            System.out.println("正确："+storeCaptcha.equals(loginBody.getSmsCode()));
             throw new ServiceException("验证码验证失败");
         }
 

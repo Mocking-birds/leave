@@ -55,8 +55,6 @@ public class SysPermissionService
     public Set<String> getMenuPermission(SysUser user)
     {
         Set<String> perms = new HashSet<String>();
-        System.out.println("权限");
-        System.out.println("权限 user:" + user);
         // 管理员拥有所有权限
         if (user.isAdmin())
         {
@@ -74,6 +72,7 @@ public class SysPermissionService
                     Set<String> rolePerms = menuService.selectMenuPermsByRoleId(role.getRoleId());
                     role.setPermissions(rolePerms);
                     perms.addAll(rolePerms);
+                    System.out.println("权限测试：" + rolePerms);
                 }
             }
             else

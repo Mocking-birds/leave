@@ -55,14 +55,12 @@ public class UserDetailsServiceImpl implements UserDetailsService
         }
 
         passwordService.validate(user);
-        System.out.println("调用");
 
         return createLoginUser(user);
     }
 
     public UserDetails createLoginUser(SysUser user)
     {
-        System.out.println("创建创建");
         return new LoginUser(user.getUserId(), user.getDeptId(), user, permissionService.getMenuPermission(user));
     }
 }

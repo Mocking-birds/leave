@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leave.system.mapper.SysSwiperMapper">
+    
+    <resultMap type="SysSwiper" id="SysSwiperResult">
+        <result property="swiperId"    column="swiper_id"    />
+        <result property="description"    column="description"    />
+        <result property="imageUrl"    column="image_url"    />
+        <result property="isActive"    column="is_active"    />
+    </resultMap>
+
+    <sql id="selectSysSwiperVo">
+        select swiper_id, description, image_url, is_active from sys_swiper
+    </sql>
+
+    <select id="selectSysSwiperList" parameterType="SysSwiper" resultMap="SysSwiperResult">
+        <include refid="selectSysSwiperVo"/>
+        <where>  
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="imageUrl != null  and imageUrl != ''"> and image_url = #{imageUrl}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysSwiperBySwiperId" parameterType="Long" resultMap="SysSwiperResult">
+        <include refid="selectSysSwiperVo"/>
+        where swiper_id = #{swiperId}
+    </select>
+
+    <insert id="insertSysSwiper" parameterType="SysSwiper" useGeneratedKeys="true" keyProperty="swiperId">
+        insert into sys_swiper
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="description != null">description,</if>
+            <if test="imageUrl != null and imageUrl != ''">image_url,</if>
+            <if test="isActive != null">is_active,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="description != null">#{description},</if>
+            <if test="imageUrl != null and imageUrl != ''">#{imageUrl},</if>
+            <if test="isActive != null">#{isActive},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysSwiper" parameterType="SysSwiper">
+        update sys_swiper
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="description != null">description = #{description},</if>
+            <if test="imageUrl != null and imageUrl != ''">image_url = #{imageUrl},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+        </trim>
+        where swiper_id = #{swiperId}
+    </update>
+
+    <delete id="deleteSysSwiperBySwiperId" parameterType="Long">
+        delete from sys_swiper where swiper_id = #{swiperId}
+    </delete>
+
+    <delete id="deleteSysSwiperBySwiperIds" parameterType="String">
+        delete from sys_swiper where swiper_id in 
+        <foreach item="swiperId" collection="array" open="(" separator="," close=")">
+            #{swiperId}
+        </foreach>
+    </delete>
+</mapper>

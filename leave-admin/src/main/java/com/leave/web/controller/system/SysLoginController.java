@@ -80,6 +80,8 @@ public class SysLoginController
     public AjaxResult wechatLogin(@RequestBody LoginBody loginBody){
         AjaxResult ajax = AjaxResult.success();
 
+        System.out.println("微信登录信息：" + loginBody.getJsCode());
+
         String token = loginService.wechatLogin(loginBody.getJsCode());
         ajax.put(Constants.TOKEN, token);
         return ajax;
