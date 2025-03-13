@@ -168,7 +168,7 @@ export default {
         ],
       },
       // 图片file
-      file: {}
+      file: ''
     };
   },
   created() {
@@ -236,11 +236,12 @@ export default {
       this.$refs["form"].validate(async valid => {
         if (valid) {
           if (this.form.swiperId != null) {
-            console.log(this.form)
             console.log(this.file)
-            const res = await editSwiperImg(this.file)
-            console.log(res)
-            this.form.imageUrl = res
+            if(this.file != ''){
+              const res = await editSwiperImg(this.file)
+              console.log(res)
+              this.form.imageUrl = res
+            }
             updateSwiper(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
@@ -276,7 +277,7 @@ export default {
       console.log('成功')
       console.log(res)
       console.log(file)
-      this.form.imageUrl = URL.createObjectURL(file[0].raw);
+      this.form.imageUrl = URL.createObjectURL(res.raw);
       this.file = file[0].raw
     },
     beforeAvatarUpload(file){
