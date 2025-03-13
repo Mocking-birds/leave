@@ -11,14 +11,8 @@
 					style="min-height: 200px; max-height: 600px;" @scroll="otherScroll">
 					<swiper class="swiper" circular :autoplay="true" :interval="2000" :indicator-dots='true'
 						indicator-color='white' :duration="500">
-						<swiper-item>
-							<view class="swiper-item uni-bg-red" style="background-color: palevioletred;">A</view>
-						</swiper-item>
-						<swiper-item>
-							<view class="swiper-item uni-bg-green" style="background-color: aqua;">B</view>
-						</swiper-item>
-						<swiper-item>
-							<view class="swiper-item uni-bg-blue" style="background-color: aquamarine;">C</view>
+						<swiper-item v-for="(item,index) in swiperList" :key="index">
+							<image :src="getAvatar(item.imageUrl)" mode="" style="width: 100%;height:100%"></image>
 						</swiper-item>
 					</swiper>
 				
@@ -82,16 +76,10 @@
 		getWeather
 	} from '@/api/weather.js'
 	import QQMap from "@/qqmap-wx-jssdk1.2/qqmap-wx-jssdk.js"
-
 	import {
-		WxCalendar
-	} from '@/node_modules/@lspriv/wx-calendar/dist/index';
-	import {
-		LunarPlugin
-	} from '@/node_modules/@lspriv/wc-plugin-lunar';
+		listSwiper
+	} from '../api/system/swiper.js'
 
-	// 使用农历插件
-	// WxCalendar.use(LunarPlugin);
 
 	export default {
 		data() {
@@ -146,10 +134,19 @@
 				// 手势移动距离(0: 上滑，1: 下滑)
 				calendarMoveY: 0,
 				// 日历打点
-				selected: []
+				selected: [],
+				// 轮播图列表
+				swiperList: []
 			}
 		},
 		onLoad() {
+			// uni.authorize({
+			// 	scope: 'scope.userLocation',
+			// 	success: (res) => {
+			// 		console.log(res);
+			// 		this.getWeatherInfo()
+			// 	}
+			// })
 			this.roleName = user.state.roles[0]
 
 
@@ -158,6 +155,7 @@
 		},
 		created() {
 			console.log(this);
+			
 		},
 		mounted() {
 			
@@ -165,6 +163,11 @@
 		methods: {
 			// 获取基本数据
 			async getData() {
+				
+				// 获取轮播图列表
+				const swiperRes = await listSwiper({pageNum:1,pageSize:3,isActive:'0'})
+				console.log(swiperRes);
+				this.swiperList = swiperRes.rows
 
 				const userInfoData = await getInfo()
 				console.log(userInfoData);
@@ -336,6 +339,10 @@
 				}
 				console.log(dateArray);
 				return dateArray;
+			},
+			// 修改图片路径
+			getAvatar(imgUrl){
+				return "http://localhost:8080" + imgUrl.replace(/\/dev-api/g,"")
 			},
 			// 获取天气图标
 			getWeatherIcon() {

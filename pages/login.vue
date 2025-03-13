@@ -15,7 +15,7 @@
 				</view>
 				<view class="input-item flex align-center">
 					<view class="iconfont icon-password icon"></view>
-					<input v-model="loginForm.password" type="password" class="input" placeholder="请输入密码" maxlength="20" />
+					<input v-model="loginForm.password" type="safe-password" class="input" placeholder="请输入密码" maxlength="20" password="true"/>
 				</view>
 				<view class="input-item flex align-center" style="width: 60%;margin: 0px;" v-if="captchaEnabled">
 					<view class="iconfont icon-code icon"></view>
@@ -175,24 +175,34 @@
 			},
 			// 微信登录
 			wechatLogin(e) {
-				this.$modal.loading("登录中，请耐心等待...")
-				uni.login({
-					provider: 'weixin',
-					"onlyAuthorize": true,
-					success:(e)=>{
-						console.log(e);
-						console.log(this);
-						this.$store.dispatch('WechatLogin',e.code).then(() => {
-							this.$modal.closeLoading()
-							this.loginSuccess()
-						})
+				uni.showModal({
+					title: "提示",
+					content: "是否允许获取你的微信信息",
+					showCancel: true,
+					success: (res) => {
+						if(res.confirm){
+							this.$modal.loading("登录中，请耐心等待...")
+							uni.login({
+								provider: 'weixin',
+								"onlyAuthorize": true,
+								success:(e)=>{
+									console.log(e);
+									console.log(this);
+									this.$store.dispatch('WechatLogin',e.code).then(() => {
+										this.$modal.closeLoading()
+										this.loginSuccess()
+									})
+								},
+								fail(err){
+									console.log(err);
+								}
+							})
+						}
 					},
-					fail(err){
+					fail: (err) => {
 						console.log(err);
 					}
-				})
-				
-				
+				})	
 			},
 			// 点击手机登录
 			phoneLogin(){

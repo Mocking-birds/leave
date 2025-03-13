@@ -165,6 +165,8 @@
       }
     },
 	async created() {
+		console.log('123');
+		console.log(this.$store);
 		const res = await getInfo()
 		this.userInfo = res
 		console.log(this.userInfo);
