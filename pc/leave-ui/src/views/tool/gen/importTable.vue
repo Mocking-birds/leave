@@ -47,7 +47,8 @@
 </template>
 
 <script>
-import { listDbTable, importTable } from "@/api/tool/gen";
+import {importTable, listDbTable} from "@/api/tool/gen";
+
 export default {
   data() {
     return {

@@ -170,7 +170,7 @@
 </template>
 
 <script>
-import { listNotice, getNotice, delNotice, addNotice, updateNotice } from "@/api/system/notice";
+import {addNotice, delNotice, getNotice, listNotice, updateNotice} from "@/api/system/notice";
 
 export default {
   name: "Notice",

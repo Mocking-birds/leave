@@ -126,7 +126,7 @@
 </template>
 
 <script>
-import { listSwiper, getSwiper, delSwiper, addSwiper, updateSwiper, editSwiperImg } from "@/api/system/swiper";
+import {addSwiper, delSwiper, editSwiperImg, getSwiper, listSwiper, updateSwiper} from "@/api/system/swiper";
 
 export default {
   name: "Swiper",

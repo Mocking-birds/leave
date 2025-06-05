@@ -3,6 +3,7 @@
 </template>
 <script>
 import iFrame from "@/components/iFrame/index";
+
 export default {
   name: "Swagger",
   components: { iFrame },

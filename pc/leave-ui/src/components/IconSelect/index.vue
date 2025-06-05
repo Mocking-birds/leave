@@ -19,6 +19,7 @@
 
 <script>
 import icons from './requireIcons'
+
 export default {
   name: 'IconSelect',
   props: {

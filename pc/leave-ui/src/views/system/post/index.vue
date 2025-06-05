@@ -157,7 +157,7 @@
 </template>
 
 <script>
-import { listPost, getPost, delPost, addPost, updatePost } from "@/api/system/post";
+import {addPost, delPost, getPost, listPost, updatePost} from "@/api/system/post";
 
 export default {
   name: "Post",

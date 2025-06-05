@@ -49,7 +49,7 @@
 
 <script>
 import * as echarts from 'echarts';
-import {listPermit,listBackPermit} from "@/api/permit/permit";
+import {listBackPermit, listPermit} from "@/api/permit/permit";
 
 export default {
   name: "Index",

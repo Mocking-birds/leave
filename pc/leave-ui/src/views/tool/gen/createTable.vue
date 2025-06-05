@@ -11,7 +11,8 @@
 </template>
 
 <script>
-import { createTable } from "@/api/tool/gen";
+import {createTable} from "@/api/tool/gen";
+
 export default {
   data() {
     return {

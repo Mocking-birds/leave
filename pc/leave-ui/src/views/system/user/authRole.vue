@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { getAuthRole, updateAuthRole } from "@/api/system/user";
+import {getAuthRole, updateAuthRole} from "@/api/system/user";
 
 export default {
   name: "AuthRole",

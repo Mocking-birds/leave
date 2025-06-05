@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { constantRoutes } from "@/router";
+import {constantRoutes} from "@/router";
 
 // 隐藏侧边栏路由
 const hideList = ['/index', '/user/profile'];

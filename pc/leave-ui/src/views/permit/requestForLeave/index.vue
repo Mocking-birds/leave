@@ -142,7 +142,7 @@
 </template>
 
 <script>
-import { listPermit, getPermit, delPermit, addPermit, updatePermit, listPermitByDept } from "@/api/permit/permit";
+import {listPermitByDept, updatePermit} from "@/api/permit/permit";
 import user from "@/store/modules/user"
 
 export default {

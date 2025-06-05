@@ -342,8 +342,17 @@
 </template>
 
 <script>
-import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus, deptTreeSelect } from "@/api/system/user";
-import { getToken } from "@/utils/auth";
+import {
+  addUser,
+  changeUserStatus,
+  delUser,
+  deptTreeSelect,
+  getUser,
+  listUser,
+  resetUserPwd,
+  updateUser
+} from "@/api/system/user";
+import {getToken} from "@/utils/auth";
 import user from "@/store/modules/user"
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";

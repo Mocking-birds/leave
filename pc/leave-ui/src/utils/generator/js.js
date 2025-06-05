@@ -1,5 +1,5 @@
-import { exportDefault, titleCase } from '@/utils/index'
-import { trigger } from './config'
+import {exportDefault, titleCase} from '@/utils/index'
+import {trigger} from './config'
 
 const units = {
   KB: '1024',

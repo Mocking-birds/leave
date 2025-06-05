@@ -170,7 +170,7 @@
 </template>
 
 <script>
-import { listLocation, getLocation, delLocation, addLocation, updateLocation } from "@/api/permit/location";
+import {addLocation, delLocation, getLocation, listLocation, updateLocation} from "@/api/permit/location";
 
 export default {
   name: "Location",

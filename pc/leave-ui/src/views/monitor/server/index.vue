@@ -176,7 +176,7 @@
 </template>
 
 <script>
-import { getServer } from "@/api/monitor/server";
+import {getServer} from "@/api/monitor/server";
 
 export default {
   name: "Server",

@@ -180,8 +180,8 @@
 </template>
 
 <script>
-import { getJob} from "@/api/monitor/job";
-import { listJobLog, delJobLog, cleanJobLog } from "@/api/monitor/jobLog";
+import {getJob} from "@/api/monitor/job";
+import {cleanJobLog, delJobLog, listJobLog} from "@/api/monitor/jobLog";
 
 export default {
   name: "JobLog",
