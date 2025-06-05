@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@lspriv/wc-plugin-lunar": "^1.0.1",
+    "@lspriv/wx-calendar": "^1.8.1",
+    "echarts": "^5.1.2",
+    "echarts-for-weixin": "^1.0.2",
+    "qweather-icons": "^1.6.0"
+  }
+}

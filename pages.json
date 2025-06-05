@@ -1,0 +1,150 @@
+{
+	"pages": [{
+		"path": "pages/login"
+	}, {
+		"path": "pages/register",
+		"style": {
+			"navigationBarTitleText": "注册"
+		}
+	}, {
+		"path": "pages/index",
+		"style": {
+			"navigationBarTitleText": "首页",
+			// "navigationStyle": "custom",
+			"usingComponents": {
+				"ec-canvas": "../wxcomponents/ec-canvas/ec-canvas",
+				"calendar": "../wxcomponents/wx-calendar/dist"
+			}
+		}
+	}, {
+		"path": "pages/work/index",
+		"style": {
+			"navigationBarTitleText": "工作台"
+		}
+	}, {
+		"path": "pages/mine/index",
+		"style": {
+			"navigationBarTitleText": "我的",
+			"enablePullDownRefresh": true
+		}
+	}, {
+		"path": "pages/mine/avatar/index",
+		"style": {
+			"navigationBarTitleText": "修改头像"
+		}
+	}, {
+		"path": "pages/mine/info/index",
+		"style": {
+			"navigationBarTitleText": "个人信息"
+		}
+	}, {
+		"path": "pages/mine/info/edit",
+		"style": {
+			"navigationBarTitleText": "编辑资料"
+		}
+	}, {
+		"path": "pages/mine/pwd/index",
+		"style": {
+			"navigationBarTitleText": "修改密码"
+		}
+	}, {
+		"path": "pages/mine/setting/index",
+		"style": {
+			"navigationBarTitleText": "应用设置"
+		}
+	}, {
+		"path": "pages/mine/team/index",
+		"style": {
+			"navigationBarTitleText": "审核团队"
+		}
+	}, {
+		"path": "pages/mine/notice/index",
+		"style": {
+			"navigationBarTitleText": "消息中心"
+		}
+	}, {
+		"path": "pages/common/webview/index",
+		"style": {
+			"navigationBarTitleText": "浏览网页"
+		}
+	}, {
+		"path": "pages/common/textview/index",
+		"style": {
+			"navigationBarTitleText": "浏览文本"
+		}
+	}, {
+		"path": "pages/work/user/index",
+		"style": {
+			"navigationBarTitleText": "用户管理"
+		}
+	}, {
+		"path": "pages/work/role/index",
+		"style": {
+			"navigationBarTitleText": "角色管理"
+		}
+	}, {
+		"path": "pages/work/dept/index",
+		"style": {
+			"navigationBarTitleText": "部门管理"
+		}
+	}, {
+		"path": "pages/work/post/index",
+		"style": {
+			"navigationBarTitleText": "岗位管理"
+		}
+	}, {
+		"path": "pages/work/notice/index",
+		"style": {
+			"navigationBarTitleText": "通知公告"
+		}
+	}, {
+		"path": "pages/work/leave/index",
+		"style": {
+			"navigationBarTitleText": "假条管理"
+		}
+	}, {
+		"path": "pages/work/request/index"
+	},{
+		"path": "pages/work/leave_list/index"
+	},{
+		"path": "pages/work/detail/index"
+	},{
+		"path": "pages/smsCode"
+	}],
+	"tabBar": {
+		"color": "#000000",
+		"selectedColor": "#000000",
+		"borderStyle": "white",
+		"backgroundColor": "#ffffff",
+		"list": [{
+			"pagePath": "pages/index",
+			"iconPath": "static/images/tabbar/home.png",
+			"selectedIconPath": "static/images/tabbar/home_.png",
+			"text": "首页"
+		}, {
+			"pagePath": "pages/work/index",
+			"iconPath": "static/images/tabbar/work.png",
+			"selectedIconPath": "static/images/tabbar/work_.png",
+			"text": "工作台"
+		}, {
+			"pagePath": "pages/mine/index",
+			"iconPath": "static/images/tabbar/mine.png",
+			"selectedIconPath": "static/images/tabbar/mine_.png",
+			"text": "我的"
+		}]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "#fff",
+		"navigationBarBackgroundColor": "#261c3f"
+		// "wx-calendar": "node_modules/@lspriv/wx-calendar/dist"
+	},
+	"condition": { //模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [{
+			"name": "", //模式名称
+			"path": "pages/index", //启动页面，必选
+			"query": "" //启动参数，在页面的onLoad函数里面得到
+		}]
+	},
+	"requiredPrivateInfos": ["getLocation"]
+}
